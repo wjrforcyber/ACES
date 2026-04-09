@@ -44,7 +44,8 @@
       },
       questionnaire: {
         heading: "评估问卷",
-        progressLabel: "完成进度"
+        progressLabel: "完成进度",
+        referenceLabel: "原图"
       },
       result: {
         heading: "评估结果",
@@ -117,7 +118,8 @@
       },
       questionnaire: {
         heading: "Assessment Questionnaire",
-        progressLabel: "Progress"
+        progressLabel: "Progress",
+        referenceLabel: "Original"
       },
       result: {
         heading: "Assessment Result",
@@ -448,6 +450,29 @@
       },
       optionLabels: SCALE_OPTIONS,
       weightTag: "core"
+    },
+    {
+      id: "Q17",
+      moduleKey: "cognitive",
+      type: "image-compare",
+      prompt: {
+        zh: "圈出比原图更大的图片。",
+        en: "Circle the picture that is bigger than the original one."
+      },
+      referenceImage: "resources/images/Bug/BugOrigin.png",
+      options: [
+        {
+          value: 5,
+          image: "resources/images/Bug/BugLarger.png",
+          label: { zh: "图片 A", en: "Image A" }
+        },
+        {
+          value: 1,
+          image: "resources/images/Bug/BugSmaller.png",
+          label: { zh: "图片 B", en: "Image B" }
+        }
+      ],
+      weightTag: "core"
     }
   ];
 
@@ -622,7 +647,24 @@
         errors.push(`QUESTIONS[${index}] has invalid moduleKey: ${question.moduleKey}`);
       }
       assertBilingual(question.prompt, `QUESTIONS[${index}].prompt`, errors);
-      if (!Array.isArray(question.optionLabels) || question.optionLabels.length !== 5) {
+      if (question.type === "image-compare") {
+        if (!question.referenceImage || typeof question.referenceImage !== "string") {
+          errors.push(`QUESTIONS[${index}] missing referenceImage`);
+        }
+        if (!Array.isArray(question.options) || question.options.length < 2) {
+          errors.push(`QUESTIONS[${index}].options must contain at least 2 options`);
+        } else {
+          question.options.forEach((option, optionIndex) => {
+            if (typeof option.value !== "number") {
+              errors.push(`QUESTIONS[${index}].options[${optionIndex}].value missing`);
+            }
+            if (!option.image || typeof option.image !== "string") {
+              errors.push(`QUESTIONS[${index}].options[${optionIndex}].image missing`);
+            }
+            assertBilingual(option.label, `QUESTIONS[${index}].options[${optionIndex}].label`, errors);
+          });
+        }
+      } else if (!Array.isArray(question.optionLabels) || question.optionLabels.length !== 5) {
         errors.push(`QUESTIONS[${index}].optionLabels must contain 5 options`);
       } else {
         question.optionLabels.forEach((option, optionIndex) => {
@@ -634,8 +676,8 @@
       }
     });
 
-    if (QUESTIONS.length !== 16) {
-      errors.push(`Expected 16 questions, got ${QUESTIONS.length}`);
+    if (QUESTIONS.length !== 17) {
+      errors.push(`Expected 17 questions, got ${QUESTIONS.length}`);
     }
 
     return errors;
@@ -676,30 +718,79 @@
         const legend = document.createElement("legend");
         legend.className = "question-title";
         legend.textContent = `${question.id}. ${localize(question.prompt)}`;
-
-        const options = document.createElement("div");
-        options.className = "scale-options";
-
-        question.optionLabels.forEach((option) => {
-          const label = document.createElement("label");
-          label.className = "choice";
-
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = question.id;
-          input.value = String(option.value);
-          input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
-
-          const text = document.createElement("span");
-          text.textContent = localize(option.label);
-
-          label.appendChild(input);
-          label.appendChild(text);
-          options.appendChild(label);
-        });
-
         fieldset.appendChild(legend);
-        fieldset.appendChild(options);
+
+        if (question.type === "image-compare") {
+          const refWrap = document.createElement("div");
+          refWrap.className = "image-reference";
+
+          const refLabel = document.createElement("p");
+          refLabel.className = "image-reference-label";
+          refLabel.textContent = t("questionnaire.referenceLabel");
+
+          const refImg = document.createElement("img");
+          refImg.src = question.referenceImage;
+          refImg.alt = t("questionnaire.referenceLabel");
+          refImg.className = "reference-img";
+
+          refWrap.appendChild(refLabel);
+          refWrap.appendChild(refImg);
+          fieldset.appendChild(refWrap);
+
+          const optGrid = document.createElement("div");
+          optGrid.className = "image-options";
+
+          question.options.forEach((option) => {
+            const optLabel = document.createElement("label");
+            optLabel.className = "image-option";
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = question.id;
+            input.value = String(option.value);
+            input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
+
+            const img = document.createElement("img");
+            img.src = option.image;
+            img.alt = localize(option.label);
+            img.className = "option-img";
+
+            const caption = document.createElement("span");
+            caption.className = "image-option-caption";
+            caption.textContent = localize(option.label);
+
+            optLabel.appendChild(input);
+            optLabel.appendChild(img);
+            optLabel.appendChild(caption);
+            optGrid.appendChild(optLabel);
+          });
+
+          fieldset.appendChild(optGrid);
+        } else {
+          const options = document.createElement("div");
+          options.className = "scale-options";
+
+          question.optionLabels.forEach((option) => {
+            const label = document.createElement("label");
+            label.className = "choice";
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = question.id;
+            input.value = String(option.value);
+            input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
+
+            const text = document.createElement("span");
+            text.textContent = localize(option.label);
+
+            label.appendChild(input);
+            label.appendChild(text);
+            options.appendChild(label);
+          });
+
+          fieldset.appendChild(options);
+        }
+
         moduleWrap.appendChild(fieldset);
       });
 
