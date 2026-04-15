@@ -34,7 +34,9 @@
         start: "开始问卷",
         backToInfo: "返回信息页",
         saveDraft: "保存草稿",
-        generateResult: "生成结果",
+        previousQuestion: "上一题",
+        nextQuestion: "下一题",
+        generateResult: "提交问卷",
         editAnswers: "修改答案",
         saveRecord: "保存记录",
         exportJson: "导出 JSON",
@@ -45,8 +47,13 @@
       questionnaire: {
         heading: "评估问卷",
         progressLabel: "完成进度",
+        jumpHint: "点击题号可跳转到对应问题。",
         referenceLabel: "原图",
-        referenceCaption: "ORIGINAL"
+        referenceCaption: "ORIGINAL",
+        questionPosition: "第 {current} / {total} 题",
+        questionJump: "问题导航",
+        moduleLabel: "所属模块",
+        submitHint: "答完全部题目后可提交问卷。"
       },
       result: {
         heading: "评估结果",
@@ -109,7 +116,9 @@
         start: "Start Questionnaire",
         backToInfo: "Back to Info",
         saveDraft: "Save Draft",
-        generateResult: "Generate Result",
+        previousQuestion: "Previous Question",
+        nextQuestion: "Next Question",
+        generateResult: "Submit Questionnaire",
         editAnswers: "Edit Answers",
         saveRecord: "Save Record",
         exportJson: "Export JSON",
@@ -120,8 +129,13 @@
       questionnaire: {
         heading: "Assessment Questionnaire",
         progressLabel: "Progress",
+        jumpHint: "Click a question number to jump to it.",
         referenceLabel: "Original",
-        referenceCaption: "ORIGINAL"
+        referenceCaption: "ORIGINAL",
+        questionPosition: "Question {current} of {total}",
+        questionJump: "Question navigation",
+        moduleLabel: "Module",
+        submitHint: "The submit button is enabled after all questions are answered."
       },
       result: {
         heading: "Assessment Result",
@@ -495,6 +509,8 @@
     questionnaireError: document.getElementById("questionnaire-error"),
     progressBar: document.getElementById("progress-bar"),
     progressText: document.getElementById("progress-text"),
+    questionCounter: document.getElementById("question-counter"),
+    questionJumpList: document.getElementById("question-jump-list"),
     resultBox: document.getElementById("result-box"),
     moduleBars: document.getElementById("module-bars"),
     trackBars: document.getElementById("track-bars"),
@@ -502,6 +518,8 @@
     historyList: document.getElementById("history-list"),
     backMeta: document.getElementById("back-meta"),
     saveDraft: document.getElementById("save-draft"),
+    previousQuestion: document.getElementById("previous-question"),
+    nextQuestion: document.getElementById("next-question"),
     generateResult: document.getElementById("generate-result"),
     editAnswers: document.getElementById("edit-answers"),
     saveRecord: document.getElementById("save-record"),
@@ -517,7 +535,8 @@
     },
     answers: {},
     result: null,
-    configValid: true
+    configValid: true,
+    currentQuestionIndex: 0
   };
 
   function init() {
@@ -541,6 +560,7 @@
 
     attachEvents();
     loadDraftIntoState();
+    state.currentQuestionIndex = getInitialQuestionIndex();
     applyStateToForm();
     updateProgress();
     renderHistory();
@@ -700,116 +720,171 @@
 
   function renderQuestionnaire() {
     dom.questionnaireForm.innerHTML = "";
-    const grouped = groupQuestionsByModule();
+    dom.questionJumpList.innerHTML = "";
+    dom.questionJumpList.setAttribute("aria-label", t("questionnaire.questionJump"));
 
-    Object.keys(grouped).forEach((moduleKey) => {
-      const moduleQuestions = grouped[moduleKey];
+    QUESTIONS.forEach((question, index) => {
+      const jumpButton = document.createElement("button");
+      jumpButton.className = "question-jump-btn";
+      jumpButton.type = "button";
+      jumpButton.dataset.questionIndex = String(index);
+      jumpButton.textContent = String(index + 1);
+      jumpButton.setAttribute("aria-label", formatQuestionPosition(index));
+      dom.questionJumpList.appendChild(jumpButton);
 
-      const moduleWrap = document.createElement("section");
-      moduleWrap.className = "module";
+      const fieldset = document.createElement("fieldset");
+      fieldset.className = "question-card";
+      fieldset.dataset.questionIndex = String(index);
 
-      const moduleTitle = document.createElement("h3");
-      moduleTitle.className = "module-title";
-      moduleTitle.textContent = localize(MODULES[moduleKey].name);
-      moduleWrap.appendChild(moduleTitle);
+      const moduleTag = document.createElement("p");
+      moduleTag.className = "question-module";
+      moduleTag.textContent = `${t("questionnaire.moduleLabel")} · ${localize(MODULES[question.moduleKey].name)}`;
+      fieldset.appendChild(moduleTag);
 
-      moduleQuestions.forEach((question) => {
-        const fieldset = document.createElement("fieldset");
-        fieldset.className = "question";
+      const legend = document.createElement("legend");
+      legend.className = "question-title";
+      legend.textContent = `${question.id}. ${localize(question.prompt)}`;
+      fieldset.appendChild(legend);
 
-        const legend = document.createElement("legend");
-        legend.className = "question-title";
-        legend.textContent = `${question.id}. ${localize(question.prompt)}`;
-        fieldset.appendChild(legend);
+      if (question.type === "image-compare") {
+        fieldset.classList.add("image-compare-question");
+        const row = document.createElement("div");
+        row.className = "image-compare-row";
 
-        if (question.type === "image-compare") {
-          fieldset.classList.add("image-compare-question");
-          const row = document.createElement("div");
-          row.className = "image-compare-row";
+        const refWrap = document.createElement("div");
+        refWrap.className = "image-reference";
 
-          const refWrap = document.createElement("div");
-          refWrap.className = "image-reference";
+        const refImg = document.createElement("img");
+        refImg.src = question.referenceImage;
+        refImg.alt = t("questionnaire.referenceCaption");
+        refImg.className = "reference-img";
 
-          const refImg = document.createElement("img");
-          refImg.src = question.referenceImage;
-          refImg.alt = t("questionnaire.referenceCaption");
-          refImg.className = "reference-img";
+        refWrap.appendChild(refImg);
 
-          refWrap.appendChild(refImg);
+        const refCaption = document.createElement("span");
+        refCaption.className = "image-option-caption";
+        refCaption.textContent = t("questionnaire.referenceCaption");
 
-          const refCaption = document.createElement("span");
-          refCaption.className = "image-option-caption";
-          refCaption.textContent = t("questionnaire.referenceCaption");
+        refWrap.appendChild(refCaption);
+        row.appendChild(refWrap);
 
-          refWrap.appendChild(refCaption);
-          row.appendChild(refWrap);
+        question.options.forEach((option) => {
+          const optLabel = document.createElement("label");
+          optLabel.className = "image-option";
 
-          question.options.forEach((option) => {
-            const optLabel = document.createElement("label");
-            optLabel.className = "image-option";
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = question.id;
+          input.value = String(option.value);
+          input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
 
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = question.id;
-            input.value = String(option.value);
-            input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
+          const img = document.createElement("img");
+          img.src = option.image;
+          img.alt = localize(option.label);
+          img.className = "option-img";
 
-            const img = document.createElement("img");
-            img.src = option.image;
-            img.alt = localize(option.label);
-            img.className = "option-img";
+          const caption = document.createElement("span");
+          caption.className = "image-option-caption";
+          caption.textContent = localize(option.label);
 
-            const caption = document.createElement("span");
-            caption.className = "image-option-caption";
-            caption.textContent = localize(option.label);
+          optLabel.appendChild(input);
+          optLabel.appendChild(img);
+          optLabel.appendChild(caption);
+          row.appendChild(optLabel);
+        });
 
-            optLabel.appendChild(input);
-            optLabel.appendChild(img);
-            optLabel.appendChild(caption);
-            row.appendChild(optLabel);
-          });
+        fieldset.appendChild(row);
+      } else {
+        const options = document.createElement("div");
+        options.className = "scale-options";
 
-          fieldset.appendChild(row);
-        } else {
-          const options = document.createElement("div");
-          options.className = "scale-options";
+        question.optionLabels.forEach((option) => {
+          const label = document.createElement("label");
+          label.className = "choice";
 
-          question.optionLabels.forEach((option) => {
-            const label = document.createElement("label");
-            label.className = "choice";
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = question.id;
+          input.value = String(option.value);
+          input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
 
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = question.id;
-            input.value = String(option.value);
-            input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
+          const text = document.createElement("span");
+          text.textContent = localize(option.label);
 
-            const text = document.createElement("span");
-            text.textContent = localize(option.label);
+          label.appendChild(input);
+          label.appendChild(text);
+          options.appendChild(label);
+        });
 
-            label.appendChild(input);
-            label.appendChild(text);
-            options.appendChild(label);
-          });
+        fieldset.appendChild(options);
+      }
 
-          fieldset.appendChild(options);
-        }
-
-        moduleWrap.appendChild(fieldset);
-      });
-
-      dom.questionnaireForm.appendChild(moduleWrap);
+      dom.questionnaireForm.appendChild(fieldset);
     });
+
+    updateQuestionNavigation();
   }
 
-  function groupQuestionsByModule() {
-    return QUESTIONS.reduce((acc, question) => {
-      if (!acc[question.moduleKey]) {
-        acc[question.moduleKey] = [];
+  function getAnsweredCount() {
+    return QUESTIONS.reduce((count, question) => {
+      return count + (Number.isFinite(Number(state.answers[question.id])) ? 1 : 0);
+    }, 0);
+  }
+
+  function getInitialQuestionIndex() {
+    const firstUnanswered = QUESTIONS.findIndex((question) => !Number.isFinite(Number(state.answers[question.id])));
+    return firstUnanswered === -1 ? QUESTIONS.length - 1 : firstUnanswered;
+  }
+
+  function formatQuestionPosition(index) {
+    return t("questionnaire.questionPosition")
+      .replace("{current}", String(index + 1))
+      .replace("{total}", String(QUESTIONS.length));
+  }
+
+  function goToQuestion(index) {
+    const nextIndex = clamp(index, 0, QUESTIONS.length - 1);
+    if (nextIndex === state.currentQuestionIndex) {
+      return;
+    }
+    state.currentQuestionIndex = nextIndex;
+    updateQuestionNavigation();
+    hideError(dom.questionnaireError);
+  }
+
+  function updateQuestionNavigation() {
+    const answeredCount = getAnsweredCount();
+    const questionCards = Array.from(dom.questionnaireForm.querySelectorAll(".question-card"));
+    const jumpButtons = Array.from(dom.questionJumpList.querySelectorAll(".question-jump-btn"));
+
+    questionCards.forEach((card, index) => {
+      const active = index === state.currentQuestionIndex;
+      card.hidden = !active;
+      card.classList.toggle("is-active", active);
+    });
+
+    jumpButtons.forEach((button, index) => {
+      const question = QUESTIONS[index];
+      const answered = Number.isFinite(Number(state.answers[question.id]));
+      const active = index === state.currentQuestionIndex;
+
+      button.classList.toggle("is-current", active);
+      button.classList.toggle("is-answered", answered);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+      if (active) {
+        button.setAttribute("aria-current", "step");
+      } else {
+        button.removeAttribute("aria-current");
       }
-      acc[question.moduleKey].push(question);
-      return acc;
-    }, {});
+      button.setAttribute("aria-label", formatQuestionPosition(index));
+    });
+
+    dom.questionCounter.textContent = formatQuestionPosition(state.currentQuestionIndex);
+    dom.previousQuestion.disabled = state.currentQuestionIndex === 0;
+    dom.nextQuestion.hidden = state.currentQuestionIndex === QUESTIONS.length - 1;
+    dom.generateResult.hidden = state.currentQuestionIndex !== QUESTIONS.length - 1;
+    dom.generateResult.disabled = answeredCount !== QUESTIONS.length;
+    dom.generateResult.title = answeredCount === QUESTIONS.length ? "" : t("questionnaire.submitHint");
   }
 
   function attachEvents() {
@@ -840,9 +915,19 @@
         return;
       }
       state.answers[target.name] = Number(target.value);
+      state.result = null;
       updateProgress();
+      updateQuestionNavigation();
       hideError(dom.questionnaireError);
       persistDraft();
+    });
+
+    dom.questionJumpList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement)) {
+        return;
+      }
+      goToQuestion(Number(target.dataset.questionIndex));
     });
 
     dom.backMeta.addEventListener("click", () => {
@@ -855,11 +940,21 @@
       flashButton(dom.saveDraft, t("messages.draftSaved"));
     });
 
+    dom.previousQuestion.addEventListener("click", () => {
+      goToQuestion(state.currentQuestionIndex - 1);
+    });
+
+    dom.nextQuestion.addEventListener("click", () => {
+      goToQuestion(state.currentQuestionIndex + 1);
+    });
+
     dom.generateResult.addEventListener("click", () => {
       generateAndRenderResult();
     });
 
     dom.editAnswers.addEventListener("click", () => {
+      state.currentQuestionIndex = getInitialQuestionIndex();
+      updateQuestionNavigation();
       showStep("questionnaire");
     });
 
@@ -945,6 +1040,11 @@
     const missing = QUESTIONS.filter((question) => !Number.isFinite(state.answers[question.id]));
     if (missing.length > 0) {
       showError(dom.questionnaireError, formatUnansweredText(missing.length));
+      const firstMissingIndex = QUESTIONS.findIndex((question) => !Number.isFinite(state.answers[question.id]));
+      if (firstMissingIndex >= 0) {
+        state.currentQuestionIndex = firstMissingIndex;
+        updateQuestionNavigation();
+      }
       showStep("questionnaire");
       return;
     }
@@ -1184,6 +1284,7 @@
 
     state.answers = toAnswerMap(record.answers || []);
     state.result = computeResult(state.answers);
+    state.currentQuestionIndex = getInitialQuestionIndex();
 
     applyStateToForm();
     updateProgress();
@@ -1266,15 +1367,15 @@
       });
     });
 
+    updateQuestionNavigation();
+
     if (state.result) {
       renderResult(state.result);
     }
   }
 
   function updateProgress() {
-    const answered = QUESTIONS.reduce((count, question) => {
-      return count + (Number.isFinite(Number(state.answers[question.id])) ? 1 : 0);
-    }, 0);
+    const answered = getAnsweredCount();
 
     dom.progressBar.max = QUESTIONS.length;
     dom.progressBar.value = answered;

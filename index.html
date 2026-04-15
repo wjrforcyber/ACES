@@ -82,6 +82,19 @@
           </div>
         </div>
 
+        <div class="question-nav-panel">
+          <div class="question-nav-header">
+            <p class="question-counter" id="question-counter">第 1 / 17 题</p>
+            <p class="question-nav-hint" data-i18n="questionnaire.jumpHint">点击题号可跳转到对应问题。</p>
+          </div>
+          <div
+            class="question-jump-list"
+            id="question-jump-list"
+            role="group"
+            aria-labelledby="questionnaire-heading"
+          ></div>
+        </div>
+
         <div class="error-summary" id="config-error" role="alert" hidden></div>
         <div class="error-summary" id="questionnaire-error" role="alert" hidden></div>
 
@@ -94,8 +107,14 @@
           <button class="btn btn--tonal" type="button" id="save-draft" data-i18n="buttons.saveDraft">
             保存草稿
           </button>
+          <button class="btn btn--outlined" type="button" id="previous-question" data-i18n="buttons.previousQuestion">
+            上一题
+          </button>
+          <button class="btn btn--filled" type="button" id="next-question" data-i18n="buttons.nextQuestion">
+            下一题
+          </button>
           <button class="btn btn--filled" type="button" id="generate-result" data-i18n="buttons.generateResult">
-            生成结果
+            提交问卷
           </button>
         </div>
       </section>
