@@ -187,8 +187,8 @@
       moduleKey: "cognitive",
       type: "image-multi-pair-grid",
       prompt: {
-        zh: "选出与参考图相同的图片。",
-        en: "Select the image that matches the reference."
+        zh: "Select the images that are the same.",
+        en: "Select the images that are the same."
       },
       stemImage: "resources/images/Q1Example/Screenshot 2026-04-15 at 15.58.38.png",
       rows: [
