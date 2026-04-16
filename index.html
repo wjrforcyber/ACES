@@ -1,167 +1,266 @@
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title id="doc-title">ACES 入学评估问卷</title>
-    <link rel="stylesheet" href="fonts.css" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <a class="skip-link" href="#app-main" data-i18n="a11y.skip">跳到主要内容</a>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACES — 选择版本 / Select Version</title>
+  <style>
+    :root {
+      --md-sys-color-primary: #1a5fb4;
+      --md-sys-color-on-primary: #ffffff;
+      --md-sys-color-primary-container: #d8e3ff;
+      --md-sys-color-on-primary-container: #001a41;
+      --md-sys-color-secondary: #445f8c;
+      --md-sys-color-secondary-container: #dbe2f9;
+      --md-sys-color-surface: #f8f9ff;
+      --md-sys-color-surface-container: #eef2ff;
+      --md-sys-color-outline: #75829d;
+      --md-sys-color-outline-variant: #c3c9d8;
+      --md-sys-color-on-surface: #172033;
+      --md-sys-color-on-surface-variant: #43506b;
+      --md-ref-radius-sm: 12px;
+      --md-ref-radius-md: 16px;
+      --md-ref-radius-lg: 24px;
+      --md-elevation-1: 0 1px 2px rgba(12, 34, 72, 0.1), 0 2px 8px rgba(12, 34, 72, 0.08);
+      --md-elevation-2: 0 8px 24px rgba(19, 42, 82, 0.12);
+    }
 
-    <header class="topbar" role="banner">
-      <div class="topbar__inner">
-        <button class="brand brand-button" type="button" id="brand-home">
-          <p class="brand__eyebrow">ACES</p>
-          <h1 class="brand__title" data-i18n="brand.title">自适应认知评估系统</h1>
-        </button>
+    *, *::before, *::after { box-sizing: border-box; }
 
-        <div class="topbar-actions">
-          <button class="home-btn" type="button" id="home-button" data-i18n="buttons.home">Home</button>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
-          <div class="lang-switch" role="group" id="lang-switch" aria-label="Language Switch">
-            <button class="lang-btn" type="button" data-lang="zh" id="lang-zh">中文</button>
-            <button class="lang-btn" type="button" data-lang="en" id="lang-en">English</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    body {
+      color: var(--md-sys-color-on-surface);
+      font-family: "Manrope", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+      background:
+        radial-gradient(circle at 10% -15%, #d8e7ff 0, transparent 40%),
+        radial-gradient(circle at 95% 5%, #ccf1ff 0, transparent 34%),
+        linear-gradient(180deg, #f7f9ff 0%, #f2f5fc 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
 
-    <main class="layout" id="app-main">
-      <section class="hero card" aria-labelledby="hero-title">
-        <p class="hero__eyebrow" data-i18n="hero.eyebrow">教学分层支持原型</p>
-        <h2 id="hero-title" class="hero__title" data-i18n="hero.title">入学评估问卷</h2>
-        <p class="hero__subtitle" data-i18n="hero.subtitle">
-          教师观察填写，用于教学分组建议，不用于医学诊断。
-        </p>
-      </section>
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
 
-      <section class="card" id="step-meta" data-step="meta" aria-labelledby="meta-heading">
-        <h2 id="meta-heading" data-i18n="meta.heading">基本信息</h2>
-        <p class="section-lead" data-i18n="meta.lead">
-          请先填写基本信息，再进入问卷模块。
-        </p>
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
 
-        <form id="meta-form" novalidate>
-          <div class="field-grid">
-            <div class="md-field">
-              <label for="student-id" data-i18n="meta.studentId">学生编号</label>
-              <input id="student-id" name="studentId" type="text" maxlength="40" required />
-            </div>
-            <div class="md-field">
-              <label for="teacher-name" data-i18n="meta.teacherName">教师姓名</label>
-              <input id="teacher-name" name="teacherName" type="text" maxlength="40" required />
-            </div>
-            <div class="md-field">
-              <label for="assessment-date" data-i18n="meta.assessmentDate">评估日期</label>
-              <input id="assessment-date" name="assessmentDate" type="date" required />
-            </div>
-          </div>
+    .subtitle {
+      font-size: 1.125rem;
+      color: var(--md-sys-color-on-surface-variant);
+      margin: 0;
+    }
 
-          <p class="hint" data-i18n="meta.hint">必填字段不能为空。</p>
-          <p class="error" id="meta-error" role="alert" hidden></p>
+    .lang-toggle {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      gap: 0.25rem;
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--md-ref-radius-lg);
+      padding: 0.2rem;
+    }
 
-          <div class="actions">
-            <button class="btn btn--filled" type="submit" id="start-questionnaire" data-i18n="buttons.start">
-              开始问卷
-            </button>
-          </div>
-        </form>
-      </section>
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: var(--md-sys-color-on-surface-variant);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--md-ref-radius-sm);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
 
-      <section
-        class="card"
-        id="step-questionnaire"
-        data-step="questionnaire"
-        aria-labelledby="questionnaire-heading"
-        hidden
-      >
-        <div class="questionnaire-top">
-          <h2 id="questionnaire-heading" data-i18n="questionnaire.heading">评估问卷</h2>
-          <div class="progress-wrap">
-            <label for="progress-bar" id="progress-label" data-i18n="questionnaire.progressLabel">完成进度</label>
-            <progress id="progress-bar" max="12" value="0">0/12</progress>
-            <span id="progress-text">0 / 12</span>
-          </div>
-        </div>
+    .lang-btn.is-active {
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+    }
 
-        <div class="question-nav-panel">
-          <div class="question-nav-header">
-            <p class="question-counter" id="question-counter">第 1 / 12 题</p>
-            <p class="question-nav-hint" data-i18n="questionnaire.jumpHint">点击题号可跳转到对应问题。</p>
-          </div>
-          <div
-            class="question-jump-list"
-            id="question-jump-list"
-            role="group"
-            aria-labelledby="questionnaire-heading"
-          ></div>
-        </div>
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 720px;
+      width: 100%;
+    }
 
-        <div class="error-summary" id="config-error" role="alert" hidden></div>
-        <div class="error-summary" id="questionnaire-error" role="alert" hidden></div>
+    .card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-ref-radius-md);
+      box-shadow: var(--md-elevation-1);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
 
-        <form id="questionnaire-form" novalidate aria-describedby="progress-label"></form>
+    .card:hover {
+      box-shadow: var(--md-elevation-2);
+      transform: translateY(-2px);
+    }
 
-        <div class="actions">
-          <button class="btn btn--outlined" type="button" id="back-meta" data-i18n="buttons.backToInfo">
-            返回信息页
-          </button>
-          <button class="btn btn--tonal" type="button" id="save-draft" data-i18n="buttons.saveDraft">
-            保存草稿
-          </button>
-          <button class="btn btn--outlined" type="button" id="previous-question" data-i18n="buttons.previousQuestion">
-            上一题
-          </button>
-          <button class="btn btn--filled" type="button" id="next-question" data-i18n="buttons.nextQuestion">
-            下一题
-          </button>
-          <button class="btn btn--filled" type="button" id="generate-result" data-i18n="buttons.generateResult">
-            提交问卷
-          </button>
-        </div>
-      </section>
+    .card__version {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin: 0;
+    }
 
-      <section class="card" id="step-result" data-step="result" aria-labelledby="result-heading" hidden>
-        <h2 id="result-heading" data-i18n="result.heading">评估结果</h2>
-        <div class="result-box" id="result-box" aria-live="polite"></div>
+    .card__desc {
+      font-size: 0.9375rem;
+      color: var(--md-sys-color-on-surface-variant);
+      margin: 0;
+      line-height: 1.6;
+    }
 
-        <h3 data-i18n="result.moduleScores">Part 1 得分</h3>
-        <div id="module-bars" class="bars"></div>
+    .card__btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 100px;
+      background: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
 
-        <h3 data-i18n="result.trackScores">Part 2 得分</h3>
-        <div id="track-bars" class="bars"></div>
+    .card__btn:hover {
+      opacity: 0.9;
+    }
 
-        <h3 data-i18n="result.recommendations">建议</h3>
-        <ul id="recommendation-list" class="recommendation-list"></ul>
+    .card__btn:active {
+      opacity: 0.8;
+    }
 
-        <div class="actions">
-          <button class="btn btn--outlined" type="button" id="edit-answers" data-i18n="buttons.editAnswers">
-            修改答案
-          </button>
-          <button class="btn btn--filled" type="button" id="save-record" data-i18n="buttons.saveRecord">
-            保存记录
-          </button>
-          <button class="btn btn--tonal" type="button" id="export-record" data-i18n="buttons.exportJson">
-            导出 JSON
-          </button>
-        </div>
-      </section>
+    .card__tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+    }
 
-      <section class="card" id="history" aria-labelledby="history-heading">
-        <h2 id="history-heading" data-i18n="history.heading">本机历史记录</h2>
-        <p class="section-lead" data-i18n="history.lead">
-          记录仅保存在当前浏览器中，可用于试运行复盘。
-        </p>
-        <ul id="history-list" class="history-list" aria-live="polite"></ul>
-      </section>
-    </main>
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.8125rem;
+      color: var(--md-sys-color-outline);
+    }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle" role="group" aria-label="Language">
+    <button class="lang-btn is-active" data-lang="zh" aria-pressed="true">中文</button>
+    <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+  </div>
 
-    <footer class="footer" data-i18n="footer.text">
-      ACES Prototype · Session Use Only · 非医疗用途
-    </footer>
+  <header>
+    <h1>ACES</h1>
+    <p class="subtitle" data-i18n="subtitle">适应性认知评估系统 / Adaptive Cognitive Evaluation System</p>
+  </header>
 
-    <script src="app.js"></script>
-  </body>
+  <div class="cards">
+    <div class="card">
+      <h2 class="card__version">V1</h2>
+      <span class="card__tag" data-i18n="v1Tag">原版</span>
+      <p class="card__desc" data-i18n="v1Desc">原始评估版本 — 模块化评分系统与职业方向推荐</p>
+      <a class="card__btn" href="./v1/" data-i18n="v1Btn">进入 V1 →</a>
+    </div>
+    <div class="card">
+      <h2 class="card__version">V2</h2>
+      <span class="card__tag" data-i18n="v2Tag">更新版</span>
+      <p class="card__desc" data-i18n="v2Desc">重构评估版本 — 三级支持等级评分与教师评估量表</p>
+      <a class="card__btn" href="./v2/" data-i18n="v2Btn">进入 V2 →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p data-i18n="footer">UCMP6030 课程项目 · 特殊教育方案设计</p>
+  </footer>
+
+  <script>
+    const TEXT = {
+      subtitle: {
+        zh: "适应性认知评估系统",
+        en: "Adaptive Cognitive Evaluation System"
+      },
+      v1Tag: { zh: "原版", en: "Original" },
+      v1Desc: {
+        zh: "原始评估版本 — 模块化评分系统与职业方向推荐",
+        en: "Original assessment — Module-based scoring with career track recommendations"
+      },
+      v1Btn: { zh: "进入 V1 →", en: "Open V1 →" },
+      v2Tag: { zh: "更新版", en: "Updated" },
+      v2Desc: {
+        zh: "重构评估版本 — 三级支持等级评分与教师评估量表",
+        en: "Refactored assessment — 3-level support scoring with teacher rating scales"
+      },
+      v2Btn: { zh: "进入 V2 →", en: "Open V2 →" },
+      footer: {
+        zh: "UCMP6030 课程项目 · 特殊教育方案设计",
+        en: "UCMP6030 Course Project · Special Education Program Design"
+      }
+    };
+
+    let lang = localStorage.getItem("aces_language") || "zh";
+
+    function applyLang() {
+      document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        const key = el.getAttribute("data-i18n");
+        if (TEXT[key]) {
+          el.textContent = TEXT[key][lang] || TEXT[key].zh;
+        }
+      });
+      document.querySelectorAll(".lang-btn").forEach(function (btn) {
+        const isActive = btn.getAttribute("data-lang") === lang;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-pressed", String(isActive));
+      });
+      document.documentElement.lang = lang;
+    }
+
+    document.querySelectorAll(".lang-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        lang = btn.getAttribute("data-lang");
+        localStorage.setItem("aces_language", lang);
+        applyLang();
+      });
+    });
+
+    applyLang();
+  </script>
+</body>
 </html>
