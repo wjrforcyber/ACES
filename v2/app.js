@@ -187,7 +187,7 @@
       moduleKey: "cognitive",
       type: "image-multi-pair-grid",
       prompt: {
-        zh: "Select the images that are the same.",
+        zh: "选出相同的图片。",
         en: "Select the images that are the same."
       },
       stemImage: "resources/images/Q1Example/Screenshot 2026-04-15 at 15.58.38.png",
@@ -261,7 +261,7 @@
       moduleKey: "cognitive",
       type: "image-match-grid",
       prompt: {
-        zh: "Select the picture that belongs with the first one.",
+        zh: "选出与第一张图相匹配的图片。",
         en: "Select the picture that belongs with the first one."
       },
       stemImage: "resources/images/Q3/Q3-1.png",
@@ -295,7 +295,7 @@
       moduleKey: "cognitive",
       type: "image-select-pool",
       prompt: {
-        zh: "Select what you would wear.",
+        zh: "选出你会穿的衣物。",
         en: "Select what you would wear."
       },
       sceneImage: "resources/images/Q4/Q4-1.png",
@@ -314,7 +314,7 @@
       moduleKey: "cognitive",
       type: "image-select-pool",
       prompt: {
-        zh: "Select what you would wear.",
+        zh: "选出你会穿的衣物。",
         en: "Select what you would wear."
       },
       sceneImage: "resources/images/Q5/Q5-1.png",
@@ -333,7 +333,7 @@
       moduleKey: "cognitive",
       type: "emotion-grid",
       prompt: {
-        zh: "How would you feel?",
+        zh: "你会有什么感觉？",
         en: "How would you feel?"
       },
       stemImage: "resources/images/Q6/question.png",
@@ -374,7 +374,7 @@
       moduleKey: "cognitive",
       type: "image-match-grid",
       prompt: {
-        zh: "Find the Opposite: Select the picture that shows the opposite of the first one.",
+        zh: "找出相反：选出与第一张图相反的图片。",
         en: "Find the Opposite: Select the picture that shows the opposite of the first one."
       },
       stemImage: "resources/images/Q7/question.png",
@@ -408,7 +408,7 @@
       moduleKey: "cognitive",
       type: "image-match-grid-noexample",
       prompt: {
-        zh: "Find the Opposite: Select the picture that shows the opposite of the first one.",
+        zh: "找出相反：选出与第一张图相反的图片。",
         en: "Find the Opposite: Select the picture that shows the opposite of the first one."
       },
       rows: [
@@ -441,7 +441,7 @@
       moduleKey: "cognitive",
       type: "image-pair-grid",
       prompt: {
-        zh: "Select the group that is greater.",
+        zh: "选出数量较多的一组。",
         en: "Select the group that is greater."
       },
       stemImage: "resources/images/Q9/question.png",
@@ -472,7 +472,7 @@
       moduleKey: "cognitive",
       type: "image-pair-grid",
       prompt: {
-        zh: "Select the group that is less.",
+        zh: "选出数量较少的一组。",
         en: "Select the group that is less."
       },
       stemImage: "resources/images/Q10/question.png",
