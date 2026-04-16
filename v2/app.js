@@ -215,27 +215,27 @@
       moduleKey: "cognitive",
       type: "image-pair-grid",
       prompt: {
-        zh: "Select the group that is greater.",
-        en: "Select the group that is greater."
+        zh: "Select the group that is less.",
+        en: "Select the group that is less."
       },
       stemImage: "resources/images/Q10/question.png",
       rows: [
         {
           options: [
-            { image: "resources/images/Q10/Q10-1.png", isCorrect: false },
-            { image: "resources/images/Q10/Q10-2.png", isCorrect: true }
+            { image: "resources/images/Q10/Q10-1.png", isCorrect: true },
+            { image: "resources/images/Q10/Q10-2.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q10/Q10-3.png", isCorrect: false },
-            { image: "resources/images/Q10/Q10-4.png", isCorrect: true }
+            { image: "resources/images/Q10/Q10-3.png", isCorrect: true },
+            { image: "resources/images/Q10/Q10-4.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q10/Q10-5.png", isCorrect: true },
-            { image: "resources/images/Q10/Q10-6.png", isCorrect: false }
+            { image: "resources/images/Q10/Q10-5.png", isCorrect: false },
+            { image: "resources/images/Q10/Q10-6.png", isCorrect: true }
           ]
         }
       ],
