@@ -31,6 +31,7 @@
         hint: "必填字段不能为空。"
       },
       buttons: {
+        home: "Home",
         start: "开始问卷",
         backToInfo: "返回信息页",
         saveDraft: "保存草稿",
@@ -48,8 +49,8 @@
         heading: "评估问卷",
         progressLabel: "完成进度",
         jumpHint: "点击题号可跳转到对应问题。",
-        referenceLabel: "原图",
-        referenceCaption: "ORIGINAL",
+        exampleLabel: "示例（无需作答）",
+        answerPoolLabel: "答案（多选题）",
         questionPosition: "第 {current} / {total} 题",
         questionJump: "问题导航",
         moduleLabel: "所属模块",
@@ -57,8 +58,9 @@
       },
       result: {
         heading: "评估结果",
-        moduleScores: "模块得分",
-        trackScores: "分轨拟合分",
+        moduleScores: "Part 1 得分",
+        trackScores: "Part 2 得分",
+        totalScore: "总分",
         recommendations: "建议",
         recommendedTrack: "推荐路径",
         reassessment: "建议复评",
@@ -113,6 +115,7 @@
         hint: "All required fields must be filled."
       },
       buttons: {
+        home: "Home",
         start: "Start Questionnaire",
         backToInfo: "Back to Info",
         saveDraft: "Save Draft",
@@ -130,8 +133,8 @@
         heading: "Assessment Questionnaire",
         progressLabel: "Progress",
         jumpHint: "Click a question number to jump to it.",
-        referenceLabel: "Original",
-        referenceCaption: "ORIGINAL",
+        exampleLabel: "Example (no answer needed)",
+        answerPoolLabel: "Answers (Select all that apply)",
         questionPosition: "Question {current} of {total}",
         questionJump: "Question navigation",
         moduleLabel: "Module",
@@ -139,8 +142,9 @@
       },
       result: {
         heading: "Assessment Result",
-        moduleScores: "Module Scores",
-        trackScores: "Track Fit Scores",
+        moduleScores: "Part 1 Score",
+        trackScores: "Part 2 Score",
+        totalScore: "Total Score",
         recommendations: "Recommendations",
         recommendedTrack: "Recommended Track",
         reassessment: "Reassessment Recommended",
@@ -174,326 +178,367 @@
     }
   };
 
-  const SCALE_OPTIONS = [
-    {
-      value: 1,
-      label: {
-        zh: "1 明显困难",
-        en: "1 Significant difficulty"
-      }
-    },
-    {
-      value: 2,
-      label: {
-        zh: "2 需要较多支持",
-        en: "2 Needs substantial support"
-      }
-    },
-    {
-      value: 3,
-      label: {
-        zh: "3 在提示下可完成",
-        en: "3 Completes with prompts"
-      }
-    },
-    {
-      value: 4,
-      label: {
-        zh: "4 基本稳定",
-        en: "4 Mostly consistent"
-      }
-    },
-    {
-      value: 5,
-      label: {
-        zh: "5 稳定独立",
-        en: "5 Consistently independent"
-      }
-    }
-  ];
-
-  const MODULES = {
-    cognitive: {
-      name: {
-        zh: "认知学习能力",
-        en: "Cognitive Ability & Learning Potential"
-      },
-      lowScoreAdvice: {
-        zh: "建议使用分步骤指令、短时任务和视觉提示卡，降低单次信息负荷。",
-        en: "Use stepwise instructions, short tasks, and visual cues to reduce cognitive load."
-      }
-    },
-    communication: {
-      name: {
-        zh: "沟通与社交互动",
-        en: "Communication & Social Interaction"
-      },
-      lowScoreAdvice: {
-        zh: "建议增加角色扮演与同伴互动练习，优先训练表达需求与轮流规则。",
-        en: "Increase role-play and peer interaction practice, prioritizing need expression and turn-taking."
-      }
-    },
-    life: {
-      name: {
-        zh: "生活技能",
-        en: "Practical Life Skills"
-      },
-      lowScoreAdvice: {
-        zh: "建议采用情境化生活任务与重复演练，逐步提升自理和任务完成能力。",
-        en: "Adopt contextual daily tasks with repeated practice to build self-care and task completion skills."
-      }
-    },
-    sensory: {
-      name: {
-        zh: "感觉与行为调节",
-        en: "Sensory Processing & Behavioral Patterns"
-      },
-      lowScoreAdvice: {
-        zh: "建议提供可预期的课堂节奏、感官调节角和过渡提醒，降低触发风险。",
-        en: "Provide predictable routines, sensory regulation corners, and transition cues to reduce triggers."
-      }
-    }
-  };
-
-  const TRACKS = {
-    employment: {
-      name: {
-        zh: "就业准备路径",
-        en: "Employment Readiness Track"
-      },
-      recommendations: [
-        {
-          zh: "可加强任务连续性、时间意识与岗位沟通训练，逐步贴近真实工作流程。",
-          en: "Strengthen task continuity, time awareness, and job communication to mirror real workflows."
-        },
-        {
-          zh: "建议引入模拟岗位任务，训练在低提示条件下的稳定表现。",
-          en: "Introduce simulated workplace tasks to build consistent performance with fewer prompts."
-        }
-      ]
-    },
-    independent: {
-      name: {
-        zh: "独立生活路径",
-        en: "Independent Living Skills Track"
-      },
-      recommendations: [
-        {
-          zh: "建议重点发展购物、金钱管理、家庭事务等生活场景技能。",
-          en: "Prioritize skills for shopping, money handling, and household routines."
-        },
-        {
-          zh: "可将课程组织为“示范-跟做-独立完成”三步，逐步减少教师介入。",
-          en: "Use a model-follow-independent sequence to gradually reduce teacher intervention."
-        }
-      ]
-    },
-    basic: {
-      name: {
-        zh: "基础行为支持路径",
-        en: "Basic Behavioral Management Track"
-      },
-      recommendations: [
-        {
-          zh: "建议先聚焦行为稳定、基础沟通和课堂参与度，再逐步增加任务复杂度。",
-          en: "Prioritize behavioral stability, basic communication, and classroom participation before increasing task complexity."
-        },
-        {
-          zh: "采用高频短时练习与正向强化，建立可持续的学习节奏。",
-          en: "Use frequent short practices and positive reinforcement to establish sustainable learning routines."
-        }
-      ]
-    }
-  };
-
   const QUESTIONS = [
     {
       id: "Q1",
       moduleKey: "cognitive",
+      type: "image-pair-grid",
       prompt: {
-        zh: "学生在 10 分钟任务中保持注意力的稳定性。",
-        en: "The student can maintain attention during a 10-minute task."
+        zh: "Select the group that is greater.",
+        en: "Select the group that is greater."
       },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
+      stemImage: "resources/images/Q9/question.png",
+      rows: [
+        {
+          options: [
+            { image: "resources/images/Q9/Q9-1.png", isCorrect: true },
+            { image: "resources/images/Q9/Q9-2.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q9/Q9-3.png", isCorrect: false },
+            { image: "resources/images/Q9/Q9-4.png", isCorrect: true }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q9/Q9-5.png", isCorrect: false },
+            { image: "resources/images/Q9/Q9-6.png", isCorrect: true }
+          ]
+        }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q2",
       moduleKey: "cognitive",
+      type: "image-pair-grid",
       prompt: {
-        zh: "学生能理解并执行两步指令（例如“先拿本子，再坐回座位”）。",
-        en: "The student can understand and follow two-step instructions."
+        zh: "Select the group that is greater.",
+        en: "Select the group that is greater."
       },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
+      stemImage: "resources/images/Q10/question.png",
+      rows: [
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-1.png", isCorrect: false },
+            { image: "resources/images/Q10/Q10-2.png", isCorrect: true }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-3.png", isCorrect: false },
+            { image: "resources/images/Q10/Q10-4.png", isCorrect: true }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-5.png", isCorrect: true },
+            { image: "resources/images/Q10/Q10-6.png", isCorrect: false }
+          ]
+        }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q3",
       moduleKey: "cognitive",
+      type: "image-select-pool",
       prompt: {
-        zh: "学生能记住并在短时间后复现新学过的课堂流程。",
-        en: "The student can recall and reproduce newly learned classroom procedures after a short delay."
+        zh: "Select what you would wear.",
+        en: "Select what you would wear."
       },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
+      sceneImage: "resources/images/Q4/Q4-1.png",
+      options: [
+        { image: "resources/images/Q4/Q4-2.png", isCorrect: false },
+        { image: "resources/images/Q4/Q4-3.png", isCorrect: true },
+        { image: "resources/images/Q4/Q4-4.png", isCorrect: false },
+        { image: "resources/images/Q4/Q4-5.png", isCorrect: true },
+        { image: "resources/images/Q4/Q4-6.png", isCorrect: true },
+        { image: "resources/images/Q4/Q4-7.png", isCorrect: false }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q4",
       moduleKey: "cognitive",
+      type: "image-select-pool",
       prompt: {
-        zh: "遇到简单问题时，学生能尝试使用已学方法解决。",
-        en: "When facing simple problems, the student attempts to apply learned strategies."
+        zh: "Select what you would wear.",
+        en: "Select what you would wear."
       },
-      optionLabels: SCALE_OPTIONS,
+      sceneImage: "resources/images/Q5/Q5-1.png",
+      options: [
+        { image: "resources/images/Q5/Q5-2.png", isCorrect: false },
+        { image: "resources/images/Q5/Q5-3.png", isCorrect: true },
+        { image: "resources/images/Q5/Q5-4.png", isCorrect: true },
+        { image: "resources/images/Q5/Q5-5.png", isCorrect: true },
+        { image: "resources/images/Q5/Q5-6.png", isCorrect: false },
+        { image: "resources/images/Q5/Q5-7.png", isCorrect: false }
+      ],
       weightTag: "support"
     },
     {
       id: "Q5",
-      moduleKey: "communication",
+      moduleKey: "cognitive",
+      type: "emotion-grid",
       prompt: {
-        zh: "学生会主动表达需求（口语、手势或替代沟通方式）。",
-        en: "The student initiates communication of needs (speech, gestures, or alternative communication)."
+        zh: "How would you feel?",
+        en: "How would you feel?"
       },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
+      stemImage: "resources/images/Q6/question.png",
+      rows: [
+        {
+          promptImage: "resources/images/Q6/6.1/1.png",
+          options: [
+            { image: "resources/images/Q6/6.1/happy.png", isCorrect: false },
+            { image: "resources/images/Q6/6.1/sad.png", isCorrect: true }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q6/6.2/2.png",
+          options: [
+            { image: "resources/images/Q6/6.2/happy.png", isCorrect: true },
+            { image: "resources/images/Q6/6.2/sad.png", isCorrect: false }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q6/6.3/3.png",
+          options: [
+            { image: "resources/images/Q6/6.3/happy.png", isCorrect: true },
+            { image: "resources/images/Q6/6.3/sad.png", isCorrect: false }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q6/6.4/4.png",
+          options: [
+            { image: "resources/images/Q6/6.4/happy.png", isCorrect: false },
+            { image: "resources/images/Q6/6.4/sad.png", isCorrect: true }
+          ]
+        }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q6",
-      moduleKey: "communication",
+      moduleKey: "cognitive",
+      type: "image-match-grid",
       prompt: {
-        zh: "学生能在对话中遵守轮流规则并等待回应。",
-        en: "The student follows turn-taking rules and waits for responses in conversations."
+        zh: "Find the Opposite: Select the picture that shows the opposite of the first one.",
+        en: "Find the Opposite: Select the picture that shows the opposite of the first one."
       },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
+      stemImage: "resources/images/Q7/question.png",
+      rows: [
+        {
+          promptImage: "resources/images/Q7/Q7-1.png",
+          options: [
+            { image: "resources/images/Q7/Q7-2.png", isCorrect: false },
+            { image: "resources/images/Q7/Q7-3.png", isCorrect: true }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q7/Q7-4.png",
+          options: [
+            { image: "resources/images/Q7/Q7-5.png", isCorrect: true },
+            { image: "resources/images/Q7/Q7-6.png", isCorrect: false }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q7/Q7-7.png",
+          options: [
+            { image: "resources/images/Q7/Q7-8.png", isCorrect: true },
+            { image: "resources/images/Q7/Q7-9.png", isCorrect: false }
+          ]
+        }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q7",
-      moduleKey: "communication",
+      moduleKey: "cognitive",
+      type: "image-match-grid-noexample",
       prompt: {
-        zh: "学生能理解常见社交情境（如打招呼、道谢、请求帮助）。",
-        en: "The student understands common social scenarios such as greeting, thanking, and asking for help."
+        zh: "Find the Opposite: Select the picture that shows the opposite of the first one.",
+        en: "Find the Opposite: Select the picture that shows the opposite of the first one."
       },
-      optionLabels: SCALE_OPTIONS,
+      rows: [
+        {
+          promptImage: "resources/images/Q8/Q8-1.png",
+          options: [
+            { image: "resources/images/Q8/Q8-2.png", isCorrect: false },
+            { image: "resources/images/Q8/Q8-3.png", isCorrect: true }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q8/Q8-4.png",
+          options: [
+            { image: "resources/images/Q8/Q8-5.png", isCorrect: true },
+            { image: "resources/images/Q8/Q8-6.png", isCorrect: false }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q8/Q8-7.png",
+          options: [
+            { image: "resources/images/Q8/Q8-8.png", isCorrect: false },
+            { image: "resources/images/Q8/Q8-9.png", isCorrect: true }
+          ]
+        }
+      ],
       weightTag: "support"
     },
     {
       id: "Q8",
-      moduleKey: "communication",
-      prompt: {
-        zh: "在角色扮演任务中，学生能根据情境作出合适回应。",
-        en: "In role-play tasks, the student can provide context-appropriate responses."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q9",
-      moduleKey: "life",
-      prompt: {
-        zh: "学生可独立或在少量提示下完成基本自理（穿衣、洗手、整理）。",
-        en: "The student completes basic self-care (dressing, handwashing, organizing) independently or with minimal prompts."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q10",
-      moduleKey: "life",
-      prompt: {
-        zh: "学生能够完成简单家务或教室值日任务。",
-        en: "The student can complete simple household or classroom duty tasks."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "support"
-    },
-    {
-      id: "Q11",
-      moduleKey: "life",
-      prompt: {
-        zh: "在模拟购物/金钱活动中，学生能识别物品与基本金额。",
-        en: "In simulated shopping or money activities, the student identifies items and basic amounts."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q12",
-      moduleKey: "life",
-      prompt: {
-        zh: "学生能按步骤完成类岗位任务（领取任务、执行、反馈）。",
-        en: "The student follows a work-like sequence (receive task, execute, report)."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q13",
-      moduleKey: "sensory",
-      prompt: {
-        zh: "学生对常见课堂声音、光线和触觉刺激的耐受程度。",
-        en: "The student tolerates common classroom sound, light, and tactile stimuli."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q14",
-      moduleKey: "sensory",
-      prompt: {
-        zh: "出现不适时，学生能在提示下使用调节策略（深呼吸、短暂离席等）。",
-        en: "When discomfort appears, the student can use regulation strategies with prompts (e.g., deep breathing, short break)."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "support"
-    },
-    {
-      id: "Q15",
-      moduleKey: "sensory",
-      prompt: {
-        zh: "学生在课堂转换环节（开始/结束/换活动）能保持行为稳定。",
-        en: "The student maintains behavioral stability during transitions (start/end/activity change)."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q16",
-      moduleKey: "sensory",
-      prompt: {
-        zh: "课堂日程发生小变动时，学生可在支持下接受调整。",
-        en: "The student can accept small routine changes with support."
-      },
-      optionLabels: SCALE_OPTIONS,
-      weightTag: "core"
-    },
-    {
-      id: "Q17",
       moduleKey: "cognitive",
-      type: "image-compare",
+      type: "image-match-grid",
       prompt: {
-        zh: "圈出比原图更大的图片。",
-        en: "Circle the picture that is bigger than the original one."
+        zh: "Select the picture that belongs with the first one.",
+        en: "Select the picture that belongs with the first one."
       },
-      referenceImage: "resources/images/Bug/BugOrigin.png",
-      options: [
+      stemImage: "resources/images/Q3/Q3-1.png",
+      rows: [
         {
-          value: 5,
-          image: "resources/images/Bug/BugLarger.png",
-          label: { zh: "图片 A", en: "Image A" }
+          promptImage: "resources/images/Q3/Q3-2.png",
+          options: [
+            { image: "resources/images/Q3/Q3-3.png", isCorrect: true },
+            { image: "resources/images/Q3/Q3-4.png", isCorrect: false }
+          ]
         },
         {
-          value: 1,
-          image: "resources/images/Bug/BugSmaller.png",
-          label: { zh: "图片 B", en: "Image B" }
+          promptImage: "resources/images/Q3/Q3-5.png",
+          options: [
+            { image: "resources/images/Q3/Q3-6.png", isCorrect: false },
+            { image: "resources/images/Q3/Q3-7.png", isCorrect: true }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q3/Q3-8.png",
+          options: [
+            { image: "resources/images/Q3/Q3-9.png", isCorrect: false },
+            { image: "resources/images/Q3/Q3-10.png", isCorrect: true }
+          ]
         }
       ],
       weightTag: "core"
+    },
+    {
+      id: "S1",
+      moduleKey: "cognitive",
+      type: "image-multi-pair-grid",
+      prompt: {
+        zh: "选出与参考图相同的图片。",
+        en: "Select the image that matches the reference."
+      },
+      stemImage: "resources/images/Q1Example/Screenshot 2026-04-15 at 15.58.38.png",
+      rows: [
+        {
+          options: [
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.30.png", isCorrect: false },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.56.png", isCorrect: true },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.14.png", isCorrect: false },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.22.png", isCorrect: true }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.20.png", isCorrect: false },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.33.png", isCorrect: true },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.38.png", isCorrect: true },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.46.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.14.png", isCorrect: true },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.19.png", isCorrect: false },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.23.png", isCorrect: false },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.27.png", isCorrect: true }
+          ]
+        }
+      ],
+      weightTag: "core"
+    },
+    {
+      id: "S2",
+      moduleKey: "cognitive",
+      type: "image-pair-grid",
+      prompt: {
+        zh: "选出与其他不同的图片。",
+        en: "Select the image that is different from the others."
+      },
+      stemImage: "resources/images/Q2Example/Screenshot 2026-04-15 at 16.06.09.png",
+      rows: [
+        {
+          options: [
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.44.png", isCorrect: false },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.50.png", isCorrect: false },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.55.png", isCorrect: true },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.07.01.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.14.png", isCorrect: true },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.20.png", isCorrect: false },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.27.png", isCorrect: false },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.32.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.42.png", isCorrect: false },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.46.png", isCorrect: true },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.50.png", isCorrect: false },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.55.png", isCorrect: false }
+          ]
+        }
+      ],
+      weightTag: "core"
+    },
+    {
+      id: "Q11",
+      moduleKey: "barrier",
+      type: "teacher-scale",
+      prompt: {
+        zh: "图片任务中的提示依赖程度",
+        en: "Prompt dependence during picture tasks"
+      },
+      description: {
+        zh: "观察学生在作答时是否需要反复提示、手势引导或示范才能回应。",
+        en: "Observe whether the child waits for hints, repeated directions, pointing cues, or models before responding."
+      },
+      options: [
+        { value: 2, label: { zh: "2 — 通常一次指令即可回应，几乎不需额外提示", en: "2 — Usually responds after the first direction, with little or no prompting" } },
+        { value: 1, label: { zh: "1 — 常需要重复指令、手势引导或缩小选择范围", en: "1 — Often needs repetition, gesture cue, or choice narrowing" } },
+        { value: 0, label: { zh: "0 — 大多数题目都严重依赖提示", en: "0 — Depends heavily on prompts on most items" } }
+      ],
+      weightTag: "barrier"
+    },
+    {
+      id: "Q12",
+      moduleKey: "barrier",
+      type: "teacher-scale",
+      prompt: {
+        zh: "测评过程中的工作行为与转换准备度",
+        en: "Work behavior and transition readiness during test"
+      },
+      description: {
+        zh: "观察学生是否能安坐、在任务间转换、并在不出现严重拒绝或情绪失控的情况下完成简短评估。",
+        en: "Observe whether the child can stay seated, shift between tasks, and finish the short assessment without major refusal or dysregulation."
+      },
+      options: [
+        { value: 2, label: { zh: "2 — 能保持参与并在任务间顺利转换，几乎不需支持", en: "2 — Stays engaged and transitions between tasks with minimal support" } },
+        { value: 1, label: { zh: "1 — 有轻微困难，但在支持下能完成", en: "1 — Mild difficulty but finishes with support" } },
+        { value: 0, label: { zh: "0 — 频繁拒绝、逃避或无法完成简短评估", en: "0 — Frequent refusal, escape, or inability to complete the short assessment" } }
+      ],
+      weightTag: "barrier"
     }
   ];
 
   const dom = {
     docTitle: document.getElementById("doc-title"),
+    brandHome: document.getElementById("brand-home"),
+    homeButton: document.getElementById("home-button"),
     langSwitch: document.getElementById("lang-switch"),
     langButtons: Array.from(document.querySelectorAll(".lang-btn")),
     stepMeta: document.getElementById("step-meta"),
@@ -534,6 +579,8 @@
       assessmentDate: ""
     },
     answers: {},
+    compositeSelections: {},
+    poolSelections: {},
     result: null,
     configValid: true,
     currentQuestionIndex: 0
@@ -541,6 +588,10 @@
 
   function init() {
     const errors = validateConfig();
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
 
     applyStaticI18n();
     updateLangButtons();
@@ -565,11 +616,8 @@
     updateProgress();
     renderHistory();
 
-    if (Object.keys(state.answers).length > 0 && isMetaComplete(readMetaFromInputs())) {
-      showStep("questionnaire");
-    } else {
-      showStep("meta");
-    }
+    showStep("meta");
+    scrollToStep(dom.stepMeta);
   }
 
   function readLanguage() {
@@ -642,64 +690,92 @@
     return String(value || "");
   }
 
+  function isCompositeType(type) {
+    return type === "image-match-grid" || type === "emotion-grid" || type === "image-match-grid-noexample" || type === "image-pair-grid" || type === "image-multi-pair-grid";
+  }
+
+  function isMultiSelectComposite(type) {
+    return type === "image-multi-pair-grid";
+  }
+
   function validateConfig() {
     const errors = [];
-
-    Object.entries(MODULES).forEach(([key, module]) => {
-      assertBilingual(module.name, `MODULES.${key}.name`, errors);
-      assertBilingual(module.lowScoreAdvice, `MODULES.${key}.lowScoreAdvice`, errors);
-    });
-
-    Object.entries(TRACKS).forEach(([key, track]) => {
-      assertBilingual(track.name, `TRACKS.${key}.name`, errors);
-      if (!Array.isArray(track.recommendations) || track.recommendations.length === 0) {
-        errors.push(`TRACKS.${key}.recommendations must be a non-empty array`);
-      } else {
-        track.recommendations.forEach((rec, index) => {
-          assertBilingual(rec, `TRACKS.${key}.recommendations[${index}]`, errors);
-        });
-      }
-    });
 
     QUESTIONS.forEach((question, index) => {
       if (!question.id || !question.moduleKey || !question.weightTag) {
         errors.push(`QUESTIONS[${index}] missing id/moduleKey/weightTag`);
       }
-      if (!MODULES[question.moduleKey]) {
-        errors.push(`QUESTIONS[${index}] has invalid moduleKey: ${question.moduleKey}`);
-      }
       assertBilingual(question.prompt, `QUESTIONS[${index}].prompt`, errors);
-      if (question.type === "image-compare") {
-        if (!question.referenceImage || typeof question.referenceImage !== "string") {
-          errors.push(`QUESTIONS[${index}] missing referenceImage`);
+
+      if (isCompositeType(question.type)) {
+        if (
+          question.type !== "image-match-grid-noexample" &&
+          question.type !== "image-pair-grid" &&
+          question.type !== "image-multi-pair-grid" &&
+          (!question.stemImage || typeof question.stemImage !== "string")
+        ) {
+          errors.push(`QUESTIONS[${index}] missing stemImage`);
         }
-        if (!Array.isArray(question.options) || question.options.length < 2) {
-          errors.push(`QUESTIONS[${index}].options must contain at least 2 options`);
+        if (!Array.isArray(question.rows) || question.rows.length === 0) {
+          errors.push(`QUESTIONS[${index}].rows must contain at least 1 row`);
+        } else {
+          question.rows.forEach((row, rowIndex) => {
+            if (
+              question.type !== "image-pair-grid" &&
+              question.type !== "image-multi-pair-grid" &&
+              (!row.promptImage || typeof row.promptImage !== "string")
+            ) {
+              errors.push(`QUESTIONS[${index}].rows[${rowIndex}].promptImage missing`);
+            }
+            if (!Array.isArray(row.options) || row.options.length < 2) {
+              errors.push(`QUESTIONS[${index}].rows[${rowIndex}].options must contain at least 2 options`);
+            } else {
+              row.options.forEach((option, optionIndex) => {
+                if (!option.image || typeof option.image !== "string") {
+                  errors.push(`QUESTIONS[${index}].rows[${rowIndex}].options[${optionIndex}].image missing`);
+                }
+                if (typeof option.isCorrect !== "boolean") {
+                  errors.push(`QUESTIONS[${index}].rows[${rowIndex}].options[${optionIndex}].isCorrect missing`);
+                }
+              });
+            }
+          });
+        }
+      } else if (question.type === "image-select-pool") {
+        if (!question.sceneImage || typeof question.sceneImage !== "string") {
+          errors.push(`QUESTIONS[${index}] missing sceneImage`);
+        }
+        if (!Array.isArray(question.options) || question.options.length === 0) {
+          errors.push(`QUESTIONS[${index}].options must contain at least 1 option`);
+        } else {
+          question.options.forEach((option, optionIndex) => {
+            if (!option.image || typeof option.image !== "string") {
+              errors.push(`QUESTIONS[${index}].options[${optionIndex}].image missing`);
+            }
+            if (typeof option.isCorrect !== "boolean") {
+              errors.push(`QUESTIONS[${index}].options[${optionIndex}].isCorrect missing`);
+            }
+          });
+        }
+      } else if (question.type === "teacher-scale") {
+        if (!Array.isArray(question.options) || question.options.length === 0) {
+          errors.push(`QUESTIONS[${index}].options must contain at least 1 option`);
         } else {
           question.options.forEach((option, optionIndex) => {
             if (typeof option.value !== "number") {
-              errors.push(`QUESTIONS[${index}].options[${optionIndex}].value missing`);
-            }
-            if (!option.image || typeof option.image !== "string") {
-              errors.push(`QUESTIONS[${index}].options[${optionIndex}].image missing`);
+              errors.push(`QUESTIONS[${index}].options[${optionIndex}].value must be a number`);
             }
             assertBilingual(option.label, `QUESTIONS[${index}].options[${optionIndex}].label`, errors);
           });
         }
-      } else if (!Array.isArray(question.optionLabels) || question.optionLabels.length !== 5) {
-        errors.push(`QUESTIONS[${index}].optionLabels must contain 5 options`);
-      } else {
-        question.optionLabels.forEach((option, optionIndex) => {
-          if (typeof option.value !== "number") {
-            errors.push(`QUESTIONS[${index}].optionLabels[${optionIndex}].value missing`);
-          }
-          assertBilingual(option.label, `QUESTIONS[${index}].optionLabels[${optionIndex}].label`, errors);
-        });
+        if (question.description) {
+          assertBilingual(question.description, `QUESTIONS[${index}].description`, errors);
+        }
       }
     });
 
-    if (QUESTIONS.length !== 17) {
-      errors.push(`Expected 17 questions, got ${QUESTIONS.length}`);
+    if (QUESTIONS.length !== 12) {
+      errors.push(`Expected 12 questions, got ${QUESTIONS.length}`);
     }
 
     return errors;
@@ -736,69 +812,154 @@
       fieldset.className = "question-card";
       fieldset.dataset.questionIndex = String(index);
 
-      const moduleTag = document.createElement("p");
-      moduleTag.className = "question-module";
-      moduleTag.textContent = `${t("questionnaire.moduleLabel")} · ${localize(MODULES[question.moduleKey].name)}`;
-      fieldset.appendChild(moduleTag);
-
       const legend = document.createElement("legend");
       legend.className = "question-title";
       legend.textContent = `${question.id}. ${localize(question.prompt)}`;
       fieldset.appendChild(legend);
 
-      if (question.type === "image-compare") {
-        fieldset.classList.add("image-compare-question");
-        const row = document.createElement("div");
-        row.className = "image-compare-row";
+      if (isCompositeType(question.type)) {
+        fieldset.classList.add("image-match-question");
+        if (question.type === "emotion-grid") {
+          fieldset.classList.add("emotion-grid-question");
+        }
+        if (question.type === "image-pair-grid" || question.type === "image-multi-pair-grid") {
+          fieldset.classList.add("image-pair-question");
+        }
 
-        const refWrap = document.createElement("div");
-        refWrap.className = "image-reference";
+        if (question.stemImage) {
+          const stemWrap = document.createElement("div");
+          stemWrap.className = "match-stem";
 
-        const refImg = document.createElement("img");
-        refImg.src = question.referenceImage;
-        refImg.alt = t("questionnaire.referenceCaption");
-        refImg.className = "reference-img";
+          if (question.type === "image-match-grid" || question.type === "image-pair-grid") {
+            const stemLabel = document.createElement("span");
+            stemLabel.className = "match-stem-label";
+            stemLabel.textContent = t("questionnaire.exampleLabel");
+            stemWrap.appendChild(stemLabel);
+          }
 
-        refWrap.appendChild(refImg);
+          const stemImg = document.createElement("img");
+          stemImg.src = question.stemImage;
+          stemImg.alt = `${question.id} stem`;
+          stemImg.className = "match-stem-img";
 
-        const refCaption = document.createElement("span");
-        refCaption.className = "image-option-caption";
-        refCaption.textContent = t("questionnaire.referenceCaption");
+          stemWrap.appendChild(stemImg);
+          fieldset.appendChild(stemWrap);
+        }
 
-        refWrap.appendChild(refCaption);
-        row.appendChild(refWrap);
+        const grid = document.createElement("div");
+        grid.className = "match-grid";
 
-        question.options.forEach((option) => {
-          const optLabel = document.createElement("label");
-          optLabel.className = "image-option";
+        question.rows.forEach((rowItem, rowIndex) => {
+          const row = document.createElement("div");
+          row.className = "match-row";
 
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = question.id;
-          input.value = String(option.value);
-          input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
+          const rowLabel = document.createElement("div");
+          rowLabel.className = "match-row-label";
+          rowLabel.textContent = `${String.fromCharCode(65 + rowIndex)}.`;
+          row.appendChild(rowLabel);
+
+          if (question.type !== "image-pair-grid" && question.type !== "image-multi-pair-grid") {
+            const promptWrap = document.createElement("div");
+            promptWrap.className = "match-prompt";
+
+            const promptImg = document.createElement("img");
+            promptImg.src = rowItem.promptImage;
+            promptImg.alt = `${question.id} row ${rowIndex + 1} prompt`;
+            promptImg.className = "match-prompt-img";
+
+            promptWrap.appendChild(promptImg);
+            row.appendChild(promptWrap);
+          }
+
+          const options = document.createElement("div");
+          options.className = "match-options";
+
+          rowItem.options.forEach((option, optionIndex) => {
+            const button = document.createElement("button");
+            button.className = question.type === "emotion-grid" ? "match-option emotion-option" : "match-option";
+            button.type = "button";
+            button.dataset.compositeQuestionId = question.id;
+            button.dataset.compositeRowIndex = String(rowIndex);
+            button.dataset.compositeOptionIndex = String(optionIndex);
+            button.setAttribute("aria-pressed", "false");
+            button.setAttribute("aria-label", `${question.id} row ${rowIndex + 1} option ${optionIndex + 1}`);
+
+            const img = document.createElement("img");
+            img.src = option.image;
+            img.alt = `${question.id} row ${rowIndex + 1} option ${optionIndex + 1}`;
+            img.className = "match-option-img";
+            if (question.type === "emotion-grid") {
+              img.classList.add(option.image.includes("/sad.png") ? "emotion-face--sad" : "emotion-face--happy");
+            }
+
+            button.appendChild(img);
+            options.appendChild(button);
+          });
+
+          row.appendChild(options);
+          grid.appendChild(row);
+        });
+
+        fieldset.appendChild(grid);
+      } else if (question.type === "image-select-pool") {
+        fieldset.classList.add("image-pool-question");
+
+        const sceneWrap = document.createElement("div");
+        sceneWrap.className = "pool-scene";
+
+        const sceneImg = document.createElement("img");
+        sceneImg.src = question.sceneImage;
+        sceneImg.alt = `${question.id} scene`;
+        sceneImg.className = "pool-scene-img";
+
+        sceneWrap.appendChild(sceneImg);
+        fieldset.appendChild(sceneWrap);
+
+        const pool = document.createElement("div");
+        pool.className = "answer-pool";
+
+        const poolLabel = document.createElement("p");
+        poolLabel.className = "answer-pool-label";
+        poolLabel.textContent = t("questionnaire.answerPoolLabel");
+        pool.appendChild(poolLabel);
+
+        const poolGrid = document.createElement("div");
+        poolGrid.className = "answer-pool-grid";
+
+        question.options.forEach((option, optionIndex) => {
+          const button = document.createElement("button");
+          button.className = "pool-option";
+          button.type = "button";
+          button.dataset.poolQuestionId = question.id;
+          button.dataset.poolOptionIndex = String(optionIndex);
+          button.setAttribute("aria-pressed", "false");
+          button.setAttribute("aria-label", `${question.id} option ${optionIndex + 1}`);
 
           const img = document.createElement("img");
           img.src = option.image;
-          img.alt = localize(option.label);
-          img.className = "option-img";
+          img.alt = `${question.id} option ${optionIndex + 1}`;
+          img.className = "pool-option-img";
 
-          const caption = document.createElement("span");
-          caption.className = "image-option-caption";
-          caption.textContent = localize(option.label);
-
-          optLabel.appendChild(input);
-          optLabel.appendChild(img);
-          optLabel.appendChild(caption);
-          row.appendChild(optLabel);
+          button.appendChild(img);
+          poolGrid.appendChild(button);
         });
 
-        fieldset.appendChild(row);
-      } else {
-        const options = document.createElement("div");
-        options.className = "scale-options";
+        pool.appendChild(poolGrid);
+        fieldset.appendChild(pool);
+      } else if (question.type === "teacher-scale") {
+        fieldset.classList.add("teacher-scale-question");
 
-        question.optionLabels.forEach((option) => {
+        if (question.description) {
+          const descP = document.createElement("p");
+          descP.className = "question-description";
+          descP.textContent = localize(question.description);
+          fieldset.appendChild(descP);
+        }
+
+        const scaleDiv = document.createElement("div");
+        scaleDiv.className = "scale-options";
+
+        question.options.forEach((option) => {
           const label = document.createElement("label");
           label.className = "choice";
 
@@ -806,17 +967,16 @@
           input.type = "radio";
           input.name = question.id;
           input.value = String(option.value);
-          input.setAttribute("aria-label", `${question.id} ${localize(option.label)}`);
 
-          const text = document.createElement("span");
-          text.textContent = localize(option.label);
+          const span = document.createElement("span");
+          span.textContent = localize(option.label);
 
           label.appendChild(input);
-          label.appendChild(text);
-          options.appendChild(label);
+          label.appendChild(span);
+          scaleDiv.appendChild(label);
         });
 
-        fieldset.appendChild(options);
+        fieldset.appendChild(scaleDiv);
       }
 
       dom.questionnaireForm.appendChild(fieldset);
@@ -825,14 +985,173 @@
     updateQuestionNavigation();
   }
 
+  function findQuestion(questionId) {
+    return QUESTIONS.find((question) => question.id === questionId) || null;
+  }
+
+  function getCompositeScore(questionId) {
+    const question = findQuestion(questionId);
+    if (!question || !isCompositeType(question.type)) {
+      return null;
+    }
+
+    const selections = state.compositeSelections[questionId];
+    if (!Array.isArray(selections) || selections.length !== question.rows.length) {
+      return null;
+    }
+
+    if (isMultiSelectComposite(question.type)) {
+      const hasAnySelection = selections.some((row) => Array.isArray(row) && row.length > 0);
+      if (!hasAnySelection) {
+        return null;
+      }
+
+      let correctRows = 0;
+      let anyCorrectOption = false;
+      question.rows.forEach((row, rowIndex) => {
+        const rowSelections = selections[rowIndex];
+        if (!Array.isArray(rowSelections) || rowSelections.length === 0) {
+          return;
+        }
+        const allCorrectSelected = row.options.every((option, optIdx) => {
+          if (option.isCorrect) {
+            return rowSelections.includes(optIdx);
+          }
+          return !rowSelections.includes(optIdx);
+        });
+        if (allCorrectSelected) {
+          correctRows++;
+        }
+        rowSelections.forEach((optIdx) => {
+          if (row.options[optIdx] && row.options[optIdx].isCorrect) {
+            anyCorrectOption = true;
+          }
+        });
+      });
+
+      if (correctRows === question.rows.length) {
+        return 2;
+      }
+      if (anyCorrectOption) {
+        return 1;
+      }
+      return 0;
+    }
+
+    const hasAnySelection = selections.some((value) => Number.isInteger(value));
+    if (!hasAnySelection) {
+      return null;
+    }
+
+    const correctCount = question.rows.reduce((count, row, rowIndex) => {
+      const optionIndex = selections[rowIndex];
+      return count + (Number.isInteger(optionIndex) && row.options[optionIndex] && row.options[optionIndex].isCorrect ? 1 : 0);
+    }, 0);
+
+    if (correctCount === question.rows.length) {
+      return 2;
+    }
+    if (correctCount > 0) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function syncCompositeQuestionAnswer(questionId) {
+    const score = getCompositeScore(questionId);
+    if (score == null) {
+      delete state.answers[questionId];
+      return;
+    }
+    state.answers[questionId] = score;
+  }
+
+  function applyCompositeSelections(questionId) {
+    const question = findQuestion(questionId);
+    const selections = state.compositeSelections[questionId] || [];
+    const buttons = dom.questionnaireForm.querySelectorAll(`[data-composite-question-id="${questionId}"]`);
+
+    const multi = question && isMultiSelectComposite(question.type);
+
+    buttons.forEach((button) => {
+      const rowIndex = Number(button.dataset.compositeRowIndex);
+      const optionIndex = Number(button.dataset.compositeOptionIndex);
+      const selected = multi
+        ? Array.isArray(selections[rowIndex]) && selections[rowIndex].includes(optionIndex)
+        : selections[rowIndex] === optionIndex;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+  }
+
+  function getPoolScore(questionId) {
+    const question = findQuestion(questionId);
+    if (!question || question.type !== "image-select-pool") {
+      return null;
+    }
+
+    const selections = state.poolSelections[questionId];
+    if (!Array.isArray(selections) || selections.length !== question.options.length) {
+      return null;
+    }
+
+    const hasAnySelection = selections.some((selected) => selected === true);
+    if (!hasAnySelection) {
+      return null;
+    }
+
+    const allMatch = question.options.every((option, index) => {
+      return Boolean(selections[index]) === option.isCorrect;
+    });
+    if (allMatch) {
+      return 2;
+    }
+
+    const hasCorrectSelected = question.options.some((option, index) => {
+      return option.isCorrect && Boolean(selections[index]);
+    });
+    if (hasCorrectSelected) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  function syncPoolQuestionAnswer(questionId) {
+    const score = getPoolScore(questionId);
+    if (score == null) {
+      delete state.answers[questionId];
+      return;
+    }
+    state.answers[questionId] = score;
+  }
+
+  function applyPoolSelections(questionId) {
+    const selections = state.poolSelections[questionId] || [];
+    const buttons = dom.questionnaireForm.querySelectorAll(`[data-pool-question-id="${questionId}"]`);
+
+    buttons.forEach((button) => {
+      const optionIndex = Number(button.dataset.poolOptionIndex);
+      const selected = selections[optionIndex] === true;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", selected ? "true" : "false");
+    });
+  }
+
   function getAnsweredCount() {
     return QUESTIONS.reduce((count, question) => {
       return count + (Number.isFinite(Number(state.answers[question.id])) ? 1 : 0);
     }, 0);
   }
 
+  function getAnswerableCount() {
+    return QUESTIONS.length;
+  }
+
   function getInitialQuestionIndex() {
-    const firstUnanswered = QUESTIONS.findIndex((question) => !Number.isFinite(Number(state.answers[question.id])));
+    const firstUnanswered = QUESTIONS.findIndex((question) => {
+      return !Number.isFinite(Number(state.answers[question.id]));
+    });
     return firstUnanswered === -1 ? QUESTIONS.length - 1 : firstUnanswered;
   }
 
@@ -850,6 +1169,14 @@
     state.currentQuestionIndex = nextIndex;
     updateQuestionNavigation();
     hideError(dom.questionnaireError);
+  }
+
+  function syncAnswerState() {
+    state.result = null;
+    updateProgress();
+    updateQuestionNavigation();
+    hideError(dom.questionnaireError);
+    persistDraft();
   }
 
   function updateQuestionNavigation() {
@@ -883,11 +1210,19 @@
     dom.previousQuestion.disabled = state.currentQuestionIndex === 0;
     dom.nextQuestion.hidden = state.currentQuestionIndex === QUESTIONS.length - 1;
     dom.generateResult.hidden = state.currentQuestionIndex !== QUESTIONS.length - 1;
-    dom.generateResult.disabled = answeredCount !== QUESTIONS.length;
-    dom.generateResult.title = answeredCount === QUESTIONS.length ? "" : t("questionnaire.submitHint");
+    dom.generateResult.disabled = answeredCount !== getAnswerableCount();
+    dom.generateResult.title = answeredCount === getAnswerableCount() ? "" : t("questionnaire.submitHint");
   }
 
   function attachEvents() {
+    dom.brandHome.addEventListener("click", () => {
+      resetAssessment();
+    });
+
+    dom.homeButton.addEventListener("click", () => {
+      resetAssessment();
+    });
+
     dom.langButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         setLanguage(btn.dataset.lang);
@@ -905,21 +1240,118 @@
 
       hideError(dom.metaError);
       state.meta = meta;
+      state.currentQuestionIndex = 0;
+      updateQuestionNavigation();
       persistDraft();
       showStep("questionnaire");
     });
 
-    dom.questionnaireForm.addEventListener("change", (event) => {
+    dom.questionnaireForm.addEventListener("click", (event) => {
       const target = event.target;
-      if (!(target instanceof HTMLInputElement) || target.type !== "radio") {
+      if (!(target instanceof Element)) {
         return;
       }
-      state.answers[target.name] = Number(target.value);
-      state.result = null;
-      updateProgress();
-      updateQuestionNavigation();
-      hideError(dom.questionnaireError);
-      persistDraft();
+
+      const poolButton = target.closest(".pool-option");
+      if (poolButton instanceof HTMLButtonElement) {
+        const questionId = poolButton.dataset.poolQuestionId;
+        const optionIndex = Number(poolButton.dataset.poolOptionIndex);
+        const question = questionId ? findQuestion(questionId) : null;
+
+        if (!questionId || !question || question.type !== "image-select-pool" || !Number.isInteger(optionIndex)) {
+          return;
+        }
+
+        const currentSelections = Array.isArray(state.poolSelections[questionId])
+          ? [...state.poolSelections[questionId]]
+          : new Array(question.options.length).fill(false);
+
+        currentSelections[optionIndex] = !currentSelections[optionIndex];
+        state.poolSelections[questionId] = currentSelections;
+        syncPoolQuestionAnswer(questionId);
+        applyPoolSelections(questionId);
+        syncAnswerState();
+        return;
+      }
+
+      const button = target.closest(".match-option");
+      if (!(button instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const questionId = button.dataset.compositeQuestionId;
+      const rowIndex = Number(button.dataset.compositeRowIndex);
+      const optionIndex = Number(button.dataset.compositeOptionIndex);
+      const question = questionId ? findQuestion(questionId) : null;
+
+      if (
+        !questionId ||
+        !question ||
+        !isCompositeType(question.type) ||
+        !Number.isInteger(rowIndex) ||
+        !Number.isInteger(optionIndex)
+      ) {
+        return;
+      }
+
+      if (isMultiSelectComposite(question.type)) {
+        const currentSelections = Array.isArray(state.compositeSelections[questionId])
+          ? state.compositeSelections[questionId].map((row) => (Array.isArray(row) ? [...row] : []))
+          : new Array(question.rows.length).fill(null).map(() => []);
+
+        const rowSelections = currentSelections[rowIndex];
+        const idx = rowSelections.indexOf(optionIndex);
+        if (idx >= 0) {
+          rowSelections.splice(idx, 1);
+        } else {
+          rowSelections.push(optionIndex);
+        }
+        state.compositeSelections[questionId] = currentSelections;
+        syncCompositeQuestionAnswer(questionId);
+        applyCompositeSelections(questionId);
+        syncAnswerState();
+        return;
+      }
+
+      const currentSelections = Array.isArray(state.compositeSelections[questionId])
+        ? [...state.compositeSelections[questionId]]
+        : new Array(question.rows.length).fill(null);
+
+      currentSelections[rowIndex] = currentSelections[rowIndex] === optionIndex ? null : optionIndex;
+      state.compositeSelections[questionId] = currentSelections;
+      syncCompositeQuestionAnswer(questionId);
+      applyCompositeSelections(questionId);
+      syncAnswerState();
+    });
+
+    dom.questionnaireForm.addEventListener("change", (event) => {
+      if (event.target instanceof HTMLInputElement && event.target.type === "radio") {
+        const questionId = event.target.name;
+        const value = Number(event.target.value);
+        if (questionId && Number.isFinite(value)) {
+          state.answers[questionId] = value;
+          syncAnswerState();
+        }
+      }
+    });
+
+    dom.questionnaireForm.addEventListener("pointerdown", (event) => {
+      if (!(event.target instanceof HTMLSpanElement)) {
+        return;
+      }
+      const label = event.target.closest("label.choice");
+      if (!label) {
+        return;
+      }
+      const input = label.querySelector("input[type=\"radio\"]");
+      if (!input || !input.checked) {
+        return;
+      }
+      event.preventDefault();
+      input.checked = false;
+      const questionId = input.name;
+      delete state.answers[questionId];
+      syncAnswerState();
     });
 
     dom.questionJumpList.addEventListener("click", (event) => {
@@ -1058,118 +1490,118 @@
   }
 
   function formatUnansweredText(count) {
-    if (state.lang === "zh") {
-      return `${t("messages.unansweredPrefix")} ${count} ${t("messages.unansweredSuffix")}`;
-    }
     return `${t("messages.unansweredPrefix")} ${count} ${t("messages.unansweredSuffix")}`;
   }
 
   function computeResult(answers) {
-    const moduleRaw = {
-      cognitive: 0,
-      communication: 0,
-      life: 0,
-      sensory: 0
+    const LEVEL_DESCRIPTIONS = {
+      1: { zh: "第一级（0-8分）：高度支持", en: "Level 1 (0-8 points): High Support" },
+      2: { zh: "第二级（9-16分）：小组支持", en: "Level 2 (9-16 points): Small Group Support" },
+      3: { zh: "第三级（17-24分）：大班/低限制", en: "Level 3 (17-24 points): Large Group / Less Restrictive" }
     };
 
-    const moduleCount = {
-      cognitive: 0,
-      communication: 0,
-      life: 0,
-      sensory: 0
+    const RECOMMENDATIONS = {
+      1: [
+        { zh: "学生可能仍处于基础视觉辨别、简单配对、简单听者反应、早期分类和极早期学业准备阶段。", en: "The student is likely still working on basic visual discrimination, simple matching, simple listener responding, early categorization, and very early academic readiness." },
+        { zh: "建议以1对1或极小组形式进行高强度、结构化教学，重点建立基础能力如要求、命名、听者技能、模仿和视觉感知/配对技能。", en: "Recommend intensive and specialized 1:1 or very small-group instruction, with major emphasis on building foundational repertoires such as mands, tacts, listener responding, imitation, and visual perceptual/matching skills." }
+      ],
+      2: [
+        { zh: "学生表现出一定的准备技能，但表现仍不够稳定或均衡。", en: "The student shows some usable readiness skills, but performance is still inconsistent or uneven." },
+        { zh: "建议在小小组教学中提供支持，仍需频繁提示、重复和支架式教学，可逐步增加自然环境教学和与语言能力更强的同伴互动。", en: "Recommend small group instruction with support, still needing frequent cues, repetition, and scaffolded teaching. Can gradually increase natural environment teaching and exposure to more verbal peers." }
+      ],
+      3: [
+        { zh: "学生在视觉、语言和学前学术任务方面展现出更广泛的准备度。", en: "The student is showing broader readiness across visual, language, and pre-academic tasks." },
+        { zh: "建议更多独立完成图片任务、更强的分类和关联推理、更准确的早期识字任务、更强的数量比较，以及较少提示下的课堂独立性。可参与较大班级或限制较少的课堂。", en: "Recommend more independent task completion, stronger reasoning, early literacy, quantitative comparison, and classroom independence with less prompting. Ready for larger-group or less restrictive classroom participation." }
+      ]
     };
+
+    let totalScore = 0;
+    let part1Score = 0;
+    let part2Score = 0;
 
     QUESTIONS.forEach((question) => {
       const score = Number(answers[question.id]);
-      moduleRaw[question.moduleKey] += score;
-      moduleCount[question.moduleKey] += 1;
-    });
-
-    const moduleScores = {};
-    Object.keys(moduleRaw).forEach((moduleKey) => {
-      const max = moduleCount[moduleKey] * 5;
-      moduleScores[moduleKey] = round1((moduleRaw[moduleKey] / max) * 100);
-    });
-
-    const cog = moduleScores.cognitive;
-    const comm = moduleScores.communication;
-    const life = moduleScores.life;
-    const sensory = moduleScores.sensory;
-
-    const trackScores = {
-      employment: round1(0.35 * cog + 0.35 * comm + 0.2 * life + 0.1 * sensory),
-      independent: round1(0.2 * cog + 0.2 * comm + 0.45 * life + 0.15 * sensory),
-      basic: round1(0.4 * (100 - cog) + 0.3 * (100 - comm) + 0.2 * (100 - life) + 0.1 * (100 - sensory))
-    };
-
-    const sortedTracks = Object.entries(trackScores).sort((a, b) => b[1] - a[1]);
-    const finalTrack = sortedTracks[0][0];
-    const scoreGap = round1(sortedTracks[0][1] - sortedTracks[1][1]);
-    const reassessmentRecommended = scoreGap < 8;
-
-    const recommendations = TRACKS[finalTrack].recommendations.map((item) => ({
-      zh: item.zh,
-      en: item.en
-    }));
-
-    Object.keys(moduleScores).forEach((moduleKey) => {
-      if (moduleScores[moduleKey] < 60) {
-        recommendations.push({
-          zh: `【${MODULES[moduleKey].name.zh}】${MODULES[moduleKey].lowScoreAdvice.zh}`,
-          en: `[${MODULES[moduleKey].name.en}] ${MODULES[moduleKey].lowScoreAdvice.en}`
-        });
+      if (Number.isFinite(score)) {
+        totalScore += score;
+        if (question.moduleKey === "cognitive") {
+          part1Score += score;
+        }
+        if (question.moduleKey === "barrier") {
+          part2Score += score;
+        }
       }
     });
 
-    if (recommendations.length === 0) {
-      recommendations.push({
-        zh: UI_TEXT.zh.result.noExtraAdvice,
-        en: UI_TEXT.en.result.noExtraAdvice
-      });
+    let level;
+    if (totalScore <= 8) {
+      level = 1;
+    } else if (totalScore <= 16) {
+      level = 2;
+    } else {
+      level = 3;
     }
 
     return {
-      moduleScores,
-      trackScores,
-      finalTrack,
-      scoreGap,
-      reassessmentRecommended,
-      recommendations
+      totalScore,
+      part1Score,
+      part2Score,
+      level,
+      levelDescription: LEVEL_DESCRIPTIONS[level],
+      recommendations: RECOMMENDATIONS[level]
     };
   }
 
   function renderResult(result) {
-    const finalTrackName = TRACKS[result.finalTrack].name;
-
     dom.resultBox.innerHTML = "";
 
     const title = document.createElement("h3");
     title.className = "result-title";
-    title.textContent = `${t("result.recommendedTrack")}: ${localize(finalTrackName)}`;
+    title.textContent = localize(result.levelDescription);
 
     const meta = document.createElement("p");
     meta.className = "result-meta";
     meta.textContent = formatResultMeta(state.meta);
 
+    const totalP = document.createElement("p");
+    totalP.style.margin = "0.45rem 0 0";
+    totalP.style.fontWeight = "700";
+    totalP.textContent = `${t("result.totalScore")}: ${result.totalScore} / 24`;
+
     dom.resultBox.appendChild(title);
     dom.resultBox.appendChild(meta);
+    dom.resultBox.appendChild(totalP);
 
-    if (result.reassessmentRecommended) {
-      const warn = document.createElement("p");
-      warn.className = "warning";
-      warn.textContent = `${t("result.reassessment")} (${t("labels.topTwoGap")}: ${result.scoreGap})`;
-      dom.resultBox.appendChild(warn);
-    }
+    dom.moduleBars.innerHTML = "";
+    const part1Row = document.createElement("div");
+    part1Row.className = "bar";
+    const part1Label = document.createElement("div");
+    part1Label.className = "bar-label";
+    part1Label.textContent = `${t("result.moduleScores")}: ${result.part1Score} / 20`;
+    const part1Track = document.createElement("div");
+    part1Track.className = "bar-track";
+    const part1Fill = document.createElement("div");
+    part1Fill.className = "bar-fill";
+    part1Fill.style.width = `${clamp((result.part1Score / 20) * 100, 0, 100)}%`;
+    part1Track.appendChild(part1Fill);
+    part1Row.appendChild(part1Label);
+    part1Row.appendChild(part1Track);
+    dom.moduleBars.appendChild(part1Row);
 
-    renderBars(dom.moduleBars, Object.keys(result.moduleScores), (key) => ({
-      label: localize(MODULES[key].name),
-      value: result.moduleScores[key]
-    }));
-
-    renderBars(dom.trackBars, Object.keys(result.trackScores), (key) => ({
-      label: localize(TRACKS[key].name),
-      value: result.trackScores[key]
-    }));
+    dom.trackBars.innerHTML = "";
+    const part2Row = document.createElement("div");
+    part2Row.className = "bar";
+    const part2Label = document.createElement("div");
+    part2Label.className = "bar-label";
+    part2Label.textContent = `${t("result.trackScores")}: ${result.part2Score} / 4`;
+    const part2Track = document.createElement("div");
+    part2Track.className = "bar-track";
+    const part2Fill = document.createElement("div");
+    part2Fill.className = "bar-fill";
+    part2Fill.style.width = `${clamp((result.part2Score / 4) * 100, 0, 100)}%`;
+    part2Track.appendChild(part2Fill);
+    part2Row.appendChild(part2Label);
+    part2Row.appendChild(part2Track);
+    dom.trackBars.appendChild(part2Row);
 
     dom.recommendationList.innerHTML = "";
     result.recommendations.forEach((rec) => {
@@ -1186,68 +1618,21 @@
     return `${t("labels.studentId")}: ${meta.studentId} · ${t("labels.teacher")}: ${meta.teacherName} · ${t("labels.date")}: ${meta.assessmentDate}`;
   }
 
-  function renderBars(container, keys, mapFn) {
-    container.innerHTML = "";
-    keys.forEach((key) => {
-      const item = mapFn(key);
-      const row = document.createElement("div");
-      row.className = "bar";
-
-      const label = document.createElement("div");
-      label.className = "bar-label";
-      label.textContent = `${item.label}: ${item.value}`;
-
-      const track = document.createElement("div");
-      track.className = "bar-track";
-
-      const fill = document.createElement("div");
-      fill.className = "bar-fill";
-      fill.style.width = `${clamp(item.value, 0, 100)}%`;
-
-      track.appendChild(fill);
-      row.appendChild(label);
-      row.appendChild(track);
-      container.appendChild(row);
-    });
-  }
-
   function buildRecord({ meta, answers, result }) {
     const answerItems = QUESTIONS.map((question) => ({
       questionId: question.id,
       score: Number(answers[question.id]),
+      compositeSelections: Array.isArray(state.compositeSelections[question.id])
+        ? state.compositeSelections[question.id]
+        : undefined,
+      poolSelections: Array.isArray(state.poolSelections[question.id]) ? state.poolSelections[question.id] : undefined,
       weightTag: question.weightTag,
       questionText: {
         zh: question.prompt.zh,
         en: question.prompt.en
       },
-      moduleKey: question.moduleKey,
-      moduleName: {
-        zh: MODULES[question.moduleKey].name.zh,
-        en: MODULES[question.moduleKey].name.en
-      }
+      moduleKey: question.moduleKey
     }));
-
-    const moduleScores = {};
-    Object.keys(result.moduleScores).forEach((moduleKey) => {
-      moduleScores[moduleKey] = {
-        score: result.moduleScores[moduleKey],
-        moduleName: {
-          zh: MODULES[moduleKey].name.zh,
-          en: MODULES[moduleKey].name.en
-        }
-      };
-    });
-
-    const trackScores = {};
-    Object.keys(result.trackScores).forEach((trackKey) => {
-      trackScores[trackKey] = {
-        score: result.trackScores[trackKey],
-        trackName: {
-          zh: TRACKS[trackKey].name.zh,
-          en: TRACKS[trackKey].name.en
-        }
-      };
-    });
 
     return {
       id: `rec_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
@@ -1258,17 +1643,13 @@
         assessmentDate: meta.assessmentDate
       },
       answers: answerItems,
-      moduleScores,
-      trackScores,
-      finalTrack: {
-        key: result.finalTrack,
-        trackName: {
-          zh: TRACKS[result.finalTrack].name.zh,
-          en: TRACKS[result.finalTrack].name.en
-        },
-        score: result.trackScores[result.finalTrack],
-        reassessmentRecommended: result.reassessmentRecommended,
-        topTwoGap: result.scoreGap
+      totalScore: result.totalScore,
+      part1Score: result.part1Score,
+      part2Score: result.part2Score,
+      level: result.level,
+      levelDescription: {
+        zh: result.levelDescription.zh,
+        en: result.levelDescription.en
       },
       recommendations: result.recommendations
     };
@@ -1283,6 +1664,8 @@
     };
 
     state.answers = toAnswerMap(record.answers || []);
+    state.compositeSelections = extractCompositeSelections(record.answers || []);
+    state.poolSelections = extractPoolSelections(record.answers || []);
     state.result = computeResult(state.answers);
     state.currentQuestionIndex = getInitialQuestionIndex();
 
@@ -1318,6 +1701,37 @@
     return {};
   }
 
+  function extractCompositeSelections(answerList) {
+    if (!Array.isArray(answerList)) {
+      return {};
+    }
+
+    return answerList.reduce((acc, answer) => {
+      if (answer && answer.questionId && Array.isArray(answer.compositeSelections)) {
+        acc[answer.questionId] = answer.compositeSelections.map((value) => {
+          if (Array.isArray(value)) {
+            return value.filter((v) => Number.isInteger(v));
+          }
+          return Number.isInteger(value) ? value : null;
+        });
+      }
+      return acc;
+    }, {});
+  }
+
+  function extractPoolSelections(answerList) {
+    if (!Array.isArray(answerList)) {
+      return {};
+    }
+
+    return answerList.reduce((acc, answer) => {
+      if (answer && answer.questionId && Array.isArray(answer.poolSelections)) {
+        acc[answer.questionId] = answer.poolSelections.map((value) => value === true);
+      }
+      return acc;
+    }, {});
+  }
+
   function exportRecord(record) {
     const stamp = (record.timestamp || new Date().toISOString()).slice(0, 19).replace(/[:T]/g, "-");
     const safeStudent = (record.meta?.studentId || "student").replace(/[^\w\u4e00-\u9fa5-]+/g, "_");
@@ -1349,6 +1763,9 @@
     };
 
     state.answers = toAnswerMap(draft.answers || {});
+    state.compositeSelections =
+      draft.compositeSelections && typeof draft.compositeSelections === "object" ? draft.compositeSelections : {};
+    state.poolSelections = draft.poolSelections && typeof draft.poolSelections === "object" ? draft.poolSelections : {};
     if (draft.result && isResultLike(draft.result)) {
       state.result = draft.result;
     }
@@ -1360,11 +1777,18 @@
     dom.assessmentDate.value = state.meta.assessmentDate || todayISO();
 
     QUESTIONS.forEach((question) => {
-      const selected = state.answers[question.id];
-      const radios = dom.questionnaireForm.querySelectorAll(`input[name="${question.id}"]`);
-      radios.forEach((radio) => {
-        radio.checked = Number(radio.value) === Number(selected);
-      });
+      if (isCompositeType(question.type)) {
+        applyCompositeSelections(question.id);
+      }
+
+      if (question.type === "image-select-pool") {
+        applyPoolSelections(question.id);
+      }
+    });
+
+    const radios = dom.questionnaireForm.querySelectorAll("input[type=\"radio\"]");
+    radios.forEach((input) => {
+      input.checked = Number(input.value) === state.answers[input.name];
     });
 
     updateQuestionNavigation();
@@ -1376,21 +1800,20 @@
 
   function updateProgress() {
     const answered = getAnsweredCount();
+    const total = getAnswerableCount();
 
-    dom.progressBar.max = QUESTIONS.length;
+    dom.progressBar.max = total;
     dom.progressBar.value = answered;
 
-    if (state.lang === "zh") {
-      dom.progressText.textContent = `${answered} / ${QUESTIONS.length}`;
-    } else {
-      dom.progressText.textContent = `${answered} / ${QUESTIONS.length}`;
-    }
+    dom.progressText.textContent = `${answered} / ${total}`;
   }
 
   function persistDraft() {
     const draft = {
       meta: readMetaFromInputs(),
       answers: state.answers,
+      compositeSelections: state.compositeSelections,
+      poolSelections: state.poolSelections,
       result: state.result,
       updatedAt: new Date().toISOString()
     };
@@ -1438,8 +1861,10 @@
 
       const title = document.createElement("p");
       title.className = "history-title";
-      const trackText = localize(record.finalTrack?.trackName) || t("messages.unknownTrack");
-      title.textContent = `${record.meta?.studentId || "N/A"} · ${trackText}`;
+      const displayText = record.levelDescription
+        ? localize(record.levelDescription)
+        : (record.finalTrack ? localize(record.finalTrack.trackName) : t("messages.unknownTrack"));
+      title.textContent = `${record.meta?.studentId || "N/A"} · ${displayText}`;
 
       const meta = document.createElement("p");
       meta.className = "history-meta";
@@ -1502,9 +1927,8 @@
     return (
       result &&
       typeof result === "object" &&
-      result.moduleScores &&
-      result.trackScores &&
-      typeof result.finalTrack === "string"
+      typeof result.totalScore === "number" &&
+      typeof result.level === "number"
     );
   }
 
@@ -1512,6 +1936,36 @@
     dom.stepMeta.hidden = step !== "meta";
     dom.stepQuestionnaire.hidden = step !== "questionnaire";
     dom.stepResult.hidden = step !== "result";
+  }
+
+  function resetAssessment() {
+    state.meta = {
+      studentId: "",
+      teacherName: "",
+      assessmentDate: todayISO()
+    };
+    state.answers = {};
+    state.compositeSelections = {};
+    state.poolSelections = {};
+    state.result = null;
+    state.currentQuestionIndex = 0;
+
+    localStorage.removeItem(STORAGE_KEYS.draft);
+
+    hideError(dom.metaError);
+    hideError(dom.questionnaireError);
+    hideError(dom.configError);
+
+    applyStateToForm();
+    updateProgress();
+    showStep("meta");
+    scrollToStep(dom.stepMeta);
+  }
+
+  function scrollToStep(element) {
+    window.requestAnimationFrame(() => {
+      element.scrollIntoView({ behavior: "auto", block: "start" });
+    });
   }
 
   function showError(el, text) {

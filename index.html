@@ -12,14 +12,18 @@
 
     <header class="topbar" role="banner">
       <div class="topbar__inner">
-        <div class="brand">
+        <button class="brand brand-button" type="button" id="brand-home">
           <p class="brand__eyebrow">ACES</p>
           <h1 class="brand__title" data-i18n="brand.title">自适应认知评估系统</h1>
-        </div>
+        </button>
 
-        <div class="lang-switch" role="group" id="lang-switch" aria-label="Language Switch">
-          <button class="lang-btn" type="button" data-lang="zh" id="lang-zh">中文</button>
-          <button class="lang-btn" type="button" data-lang="en" id="lang-en">English</button>
+        <div class="topbar-actions">
+          <button class="home-btn" type="button" id="home-button" data-i18n="buttons.home">Home</button>
+
+          <div class="lang-switch" role="group" id="lang-switch" aria-label="Language Switch">
+            <button class="lang-btn" type="button" data-lang="zh" id="lang-zh">中文</button>
+            <button class="lang-btn" type="button" data-lang="en" id="lang-en">English</button>
+          </div>
         </div>
       </div>
     </header>
@@ -77,14 +81,14 @@
           <h2 id="questionnaire-heading" data-i18n="questionnaire.heading">评估问卷</h2>
           <div class="progress-wrap">
             <label for="progress-bar" id="progress-label" data-i18n="questionnaire.progressLabel">完成进度</label>
-            <progress id="progress-bar" max="16" value="0">0/16</progress>
-            <span id="progress-text">0 / 16</span>
+            <progress id="progress-bar" max="12" value="0">0/12</progress>
+            <span id="progress-text">0 / 12</span>
           </div>
         </div>
 
         <div class="question-nav-panel">
           <div class="question-nav-header">
-            <p class="question-counter" id="question-counter">第 1 / 17 题</p>
+            <p class="question-counter" id="question-counter">第 1 / 12 题</p>
             <p class="question-nav-hint" data-i18n="questionnaire.jumpHint">点击题号可跳转到对应问题。</p>
           </div>
           <div
@@ -123,10 +127,10 @@
         <h2 id="result-heading" data-i18n="result.heading">评估结果</h2>
         <div class="result-box" id="result-box" aria-live="polite"></div>
 
-        <h3 data-i18n="result.moduleScores">模块得分</h3>
+        <h3 data-i18n="result.moduleScores">Part 1 得分</h3>
         <div id="module-bars" class="bars"></div>
 
-        <h3 data-i18n="result.trackScores">分轨拟合分</h3>
+        <h3 data-i18n="result.trackScores">Part 2 得分</h3>
         <div id="track-bars" class="bars"></div>
 
         <h3 data-i18n="result.recommendations">建议</h3>
