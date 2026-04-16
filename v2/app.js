@@ -1,8 +1,11 @@
 (() => {
+  const ASSESSMENT_VERSION = 3;
+
   const STORAGE_KEYS = {
     draft: "aces_assessment_draft",
     records: "aces_assessment_records",
-    language: "aces_language"
+    language: "aces_language",
+    version: "aces_assessment_version"
   };
 
   const SUPPORTED_LANGS = ["zh", "en"];
@@ -182,67 +185,113 @@
     {
       id: "Q1",
       moduleKey: "cognitive",
-      type: "image-pair-grid",
+      type: "image-multi-pair-grid",
       prompt: {
-        zh: "Select the group that is greater.",
-        en: "Select the group that is greater."
+        zh: "选出与参考图相同的图片。",
+        en: "Select the image that matches the reference."
       },
-      stemImage: "resources/images/Q9/question.png",
+      stemImage: "resources/images/Q1Example/Screenshot 2026-04-15 at 15.58.38.png",
       rows: [
         {
           options: [
-            { image: "resources/images/Q9/Q9-1.png", isCorrect: true },
-            { image: "resources/images/Q9/Q9-2.png", isCorrect: false }
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.30.png", isCorrect: false },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.56.png", isCorrect: true },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.14.png", isCorrect: false },
+            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.22.png", isCorrect: true }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q9/Q9-3.png", isCorrect: false },
-            { image: "resources/images/Q9/Q9-4.png", isCorrect: true }
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.20.png", isCorrect: false },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.33.png", isCorrect: true },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.38.png", isCorrect: true },
+            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.46.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q9/Q9-5.png", isCorrect: false },
-            { image: "resources/images/Q9/Q9-6.png", isCorrect: true }
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.14.png", isCorrect: true },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.19.png", isCorrect: false },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.23.png", isCorrect: false },
+            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.27.png", isCorrect: true }
           ]
         }
       ],
-      weightTag: "support"
+      weightTag: "core"
     },
     {
       id: "Q2",
       moduleKey: "cognitive",
       type: "image-pair-grid",
       prompt: {
-        zh: "Select the group that is less.",
-        en: "Select the group that is less."
+        zh: "选出与其他不同的图片。",
+        en: "Select the image that is different from the others."
       },
-      stemImage: "resources/images/Q10/question.png",
+      stemImage: "resources/images/Q2Example/Screenshot 2026-04-15 at 16.06.09.png",
       rows: [
         {
           options: [
-            { image: "resources/images/Q10/Q10-1.png", isCorrect: true },
-            { image: "resources/images/Q10/Q10-2.png", isCorrect: false }
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.44.png", isCorrect: false },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.50.png", isCorrect: false },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.55.png", isCorrect: true },
+            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.07.01.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q10/Q10-3.png", isCorrect: true },
-            { image: "resources/images/Q10/Q10-4.png", isCorrect: false }
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.14.png", isCorrect: true },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.20.png", isCorrect: false },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.27.png", isCorrect: false },
+            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.32.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q10/Q10-5.png", isCorrect: false },
-            { image: "resources/images/Q10/Q10-6.png", isCorrect: true }
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.42.png", isCorrect: false },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.46.png", isCorrect: true },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.50.png", isCorrect: false },
+            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.55.png", isCorrect: false }
           ]
         }
       ],
-      weightTag: "support"
+      weightTag: "core"
     },
     {
       id: "Q3",
+      moduleKey: "cognitive",
+      type: "image-match-grid",
+      prompt: {
+        zh: "Select the picture that belongs with the first one.",
+        en: "Select the picture that belongs with the first one."
+      },
+      stemImage: "resources/images/Q3/Q3-1.png",
+      rows: [
+        {
+          promptImage: "resources/images/Q3/Q3-2.png",
+          options: [
+            { image: "resources/images/Q3/Q3-3.png", isCorrect: true },
+            { image: "resources/images/Q3/Q3-4.png", isCorrect: false }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q3/Q3-5.png",
+          options: [
+            { image: "resources/images/Q3/Q3-6.png", isCorrect: false },
+            { image: "resources/images/Q3/Q3-7.png", isCorrect: true }
+          ]
+        },
+        {
+          promptImage: "resources/images/Q3/Q3-8.png",
+          options: [
+            { image: "resources/images/Q3/Q3-9.png", isCorrect: false },
+            { image: "resources/images/Q3/Q3-10.png", isCorrect: true }
+          ]
+        }
+      ],
+      weightTag: "core"
+    },
+    {
+      id: "Q4",
       moduleKey: "cognitive",
       type: "image-select-pool",
       prompt: {
@@ -261,7 +310,7 @@
       weightTag: "support"
     },
     {
-      id: "Q4",
+      id: "Q5",
       moduleKey: "cognitive",
       type: "image-select-pool",
       prompt: {
@@ -280,7 +329,7 @@
       weightTag: "support"
     },
     {
-      id: "Q5",
+      id: "Q6",
       moduleKey: "cognitive",
       type: "emotion-grid",
       prompt: {
@@ -321,7 +370,7 @@
       weightTag: "support"
     },
     {
-      id: "Q6",
+      id: "Q7",
       moduleKey: "cognitive",
       type: "image-match-grid",
       prompt: {
@@ -355,7 +404,7 @@
       weightTag: "support"
     },
     {
-      id: "Q7",
+      id: "Q8",
       moduleKey: "cognitive",
       type: "image-match-grid-noexample",
       prompt: {
@@ -388,112 +437,66 @@
       weightTag: "support"
     },
     {
-      id: "Q8",
-      moduleKey: "cognitive",
-      type: "image-match-grid",
-      prompt: {
-        zh: "Select the picture that belongs with the first one.",
-        en: "Select the picture that belongs with the first one."
-      },
-      stemImage: "resources/images/Q3/Q3-1.png",
-      rows: [
-        {
-          promptImage: "resources/images/Q3/Q3-2.png",
-          options: [
-            { image: "resources/images/Q3/Q3-3.png", isCorrect: true },
-            { image: "resources/images/Q3/Q3-4.png", isCorrect: false }
-          ]
-        },
-        {
-          promptImage: "resources/images/Q3/Q3-5.png",
-          options: [
-            { image: "resources/images/Q3/Q3-6.png", isCorrect: false },
-            { image: "resources/images/Q3/Q3-7.png", isCorrect: true }
-          ]
-        },
-        {
-          promptImage: "resources/images/Q3/Q3-8.png",
-          options: [
-            { image: "resources/images/Q3/Q3-9.png", isCorrect: false },
-            { image: "resources/images/Q3/Q3-10.png", isCorrect: true }
-          ]
-        }
-      ],
-      weightTag: "core"
-    },
-    {
-      id: "S1",
-      moduleKey: "cognitive",
-      type: "image-multi-pair-grid",
-      prompt: {
-        zh: "选出与参考图相同的图片。",
-        en: "Select the image that matches the reference."
-      },
-      stemImage: "resources/images/Q1Example/Screenshot 2026-04-15 at 15.58.38.png",
-      rows: [
-        {
-          options: [
-            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.30.png", isCorrect: false },
-            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 15.59.56.png", isCorrect: true },
-            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.14.png", isCorrect: false },
-            { image: "resources/images/Q1.1/Screenshot 2026-04-15 at 16.00.22.png", isCorrect: true }
-          ]
-        },
-        {
-          options: [
-            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.20.png", isCorrect: false },
-            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.33.png", isCorrect: true },
-            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.38.png", isCorrect: true },
-            { image: "resources/images/Q1.2/Screenshot 2026-04-15 at 16.03.46.png", isCorrect: false }
-          ]
-        },
-        {
-          options: [
-            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.14.png", isCorrect: true },
-            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.19.png", isCorrect: false },
-            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.23.png", isCorrect: false },
-            { image: "resources/images/Q1.3/Screenshot 2026-04-15 at 16.04.27.png", isCorrect: true }
-          ]
-        }
-      ],
-      weightTag: "core"
-    },
-    {
-      id: "S2",
+      id: "Q9",
       moduleKey: "cognitive",
       type: "image-pair-grid",
       prompt: {
-        zh: "选出与其他不同的图片。",
-        en: "Select the image that is different from the others."
+        zh: "Select the group that is greater.",
+        en: "Select the group that is greater."
       },
-      stemImage: "resources/images/Q2Example/Screenshot 2026-04-15 at 16.06.09.png",
+      stemImage: "resources/images/Q9/question.png",
       rows: [
         {
           options: [
-            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.44.png", isCorrect: false },
-            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.50.png", isCorrect: false },
-            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.06.55.png", isCorrect: true },
-            { image: "resources/images/Q2.1/Screenshot 2026-04-15 at 16.07.01.png", isCorrect: false }
+            { image: "resources/images/Q9/Q9-1.png", isCorrect: true },
+            { image: "resources/images/Q9/Q9-2.png", isCorrect: false }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.14.png", isCorrect: true },
-            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.20.png", isCorrect: false },
-            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.27.png", isCorrect: false },
-            { image: "resources/images/Q2.2/Screenshot 2026-04-15 at 16.07.32.png", isCorrect: false }
+            { image: "resources/images/Q9/Q9-3.png", isCorrect: false },
+            { image: "resources/images/Q9/Q9-4.png", isCorrect: true }
           ]
         },
         {
           options: [
-            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.42.png", isCorrect: false },
-            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.46.png", isCorrect: true },
-            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.50.png", isCorrect: false },
-            { image: "resources/images/Q2.3/Screenshot 2026-04-15 at 16.07.55.png", isCorrect: false }
+            { image: "resources/images/Q9/Q9-5.png", isCorrect: false },
+            { image: "resources/images/Q9/Q9-6.png", isCorrect: true }
           ]
         }
       ],
-      weightTag: "core"
+      weightTag: "support"
+    },
+    {
+      id: "Q10",
+      moduleKey: "cognitive",
+      type: "image-pair-grid",
+      prompt: {
+        zh: "Select the group that is less.",
+        en: "Select the group that is less."
+      },
+      stemImage: "resources/images/Q10/question.png",
+      rows: [
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-1.png", isCorrect: true },
+            { image: "resources/images/Q10/Q10-2.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-3.png", isCorrect: true },
+            { image: "resources/images/Q10/Q10-4.png", isCorrect: false }
+          ]
+        },
+        {
+          options: [
+            { image: "resources/images/Q10/Q10-5.png", isCorrect: false },
+            { image: "resources/images/Q10/Q10-6.png", isCorrect: true }
+          ]
+        }
+      ],
+      weightTag: "support"
     },
     {
       id: "Q11",
@@ -610,6 +613,13 @@
     }
 
     attachEvents();
+
+    const storedVersion = localStorage.getItem(STORAGE_KEYS.version);
+    if (storedVersion !== String(ASSESSMENT_VERSION)) {
+      localStorage.removeItem(STORAGE_KEYS.draft);
+      localStorage.setItem(STORAGE_KEYS.version, String(ASSESSMENT_VERSION));
+    }
+
     loadDraftIntoState();
     state.currentQuestionIndex = getInitialQuestionIndex();
     applyStateToForm();
